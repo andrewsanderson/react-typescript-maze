@@ -1,4 +1,5 @@
 import React from "react";
+import styled from "styled-components";
 
 interface SettingsProps {
   mazeSettingsState: [
@@ -6,6 +7,19 @@ interface SettingsProps {
     React.Dispatch<React.SetStateAction<MazeSettings>>
   ];
 }
+
+const Label = styled.div`
+  padding-left: 15px;
+  padding-right: 5px;
+`;
+
+const SettingsContainer = styled.div`
+  display: flex;
+  width: 100%;
+  justify-content: center;
+  padding: 10px;
+  background-color: #e3e3e3;
+`;
 
 const Settings = (settingsProps: SettingsProps) => {
   const { mazeSettingsState } = settingsProps;
@@ -17,29 +31,31 @@ const Settings = (settingsProps: SettingsProps) => {
   const handleChange = (e: any) => {
     const setting: keyof MazeSettings =
       e.target.attributes["data-setting"].value;
+
     const newSettings: MazeSettings = { ...mazeSettings };
+
     newSettings[setting] = e.target.value;
+
     setMazeSettings(newSettings);
-    console.log(mazeSettings);
   };
 
   return (
-    <div>
-      height
+    <SettingsContainer>
+      <Label>height</Label>
       <input
         type="number"
         data-setting="height"
         defaultValue={height}
         onChange={handleChange}
       />
-      width
+      <Label>width</Label>
       <input
         type="number"
         data-setting="width"
         defaultValue={width}
         onChange={handleChange}
       />
-    </div>
+    </SettingsContainer>
   );
 };
 
