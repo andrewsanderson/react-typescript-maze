@@ -34,7 +34,7 @@ const Settings = (settingsProps: SettingsProps) => {
 
     const newSettings: MazeSettings = { ...mazeSettings };
 
-    newSettings[setting] = e.target.value;
+    newSettings[setting] = parseInt(e.target.value);
 
     setMazeSettings(newSettings);
   };
