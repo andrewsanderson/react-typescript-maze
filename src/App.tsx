@@ -1,17 +1,25 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "./App.css";
 import Settings from "./Components/Settings";
 import mazeGeneration from "./functions/mazeUtils/mazeGeneration";
+import Maze from "./Components/Maze";
 
 function App() {
-  const mazeSettingsState = useState<MazeSettings>({
+  const [mazeSettings, setMazeSettings] = useState<MazeSettings>({
     height: 5,
     width: 5,
   });
+
+  const [maze, setMaze] = useState<Maze>(mazeGeneration(mazeSettings));
+
+  useEffect(() => {
+    setMaze(mazeGeneration(mazeSettings));
+  }, [mazeSettings]);
+
   return (
     <div className="App">
-      <Settings mazeSettingsState={mazeSettingsState} />
-      <pre>{JSON.stringify(mazeGeneration(mazeSettingsState[0]), null, 2)}</pre>
+      <Settings mazeSettingsState={[mazeSettings, setMazeSettings]} />
+      <Maze maze={maze} mazeSettings={mazeSettings} />
     </div>
   );
 }
