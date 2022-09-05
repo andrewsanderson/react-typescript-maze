@@ -1,11 +1,19 @@
-const mazeGeneration = (mazeSettings: MazeSettings) => {
+const mazeGeneration = (mazeSettings: MazeSettings): Maze => {
   const { height, width } = mazeSettings;
 
-  return [...Array(height).keys()].map((y) => {
-    return [...Array(width).keys()].map((x) => {
-      return { coordinates: [x, y] };
-    });
-  });
+  const maze = [];
+
+  for (const x of [...Array(height).keys()]) {
+    for (const y of [...Array(width).keys()]) {
+      const cell: Cell = {
+        coordinates: [x, y],
+        walls: [true, true, true, true],
+      };
+      maze.push(cell);
+    }
+  }
+
+  return maze;
 };
 
 export default mazeGeneration;
