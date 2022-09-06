@@ -5,7 +5,7 @@ const findNeighbor = (
   current: Cell,
   direction: number,
   mazeSettings: MazeSettings
-) => {
+): Cell | undefined => {
   const goalCoordinates: Coordinates = [...current.coordinates];
   switch (direction) {
     case 0:
@@ -23,9 +23,11 @@ const findNeighbor = (
     default:
       break;
   }
-  return boundaryCheck(goalCoordinates, mazeSettings)
-    ? goalCoordinates
-    : console.log("OOB", JSON.stringify(goalCoordinates));
+  const neighbor = boundaryCheck(goalCoordinates, mazeSettings)
+    ? maze.find((cell) => {
+        return cell.coordinates.toString() === goalCoordinates.toString();
+      })
+    : undefined;
+  return neighbor;
 };
-
 export default findNeighbor;
