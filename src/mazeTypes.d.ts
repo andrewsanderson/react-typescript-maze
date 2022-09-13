@@ -10,4 +10,6 @@ interface Cell {
   walls: [boolean, boolean, boolean, boolean];
 }
 
+type Path = Array<Cell>;
+
 type Maze = Array<Cell>;
