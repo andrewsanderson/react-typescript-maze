@@ -1,9 +1,9 @@
 const boundaryCheck = (
   coordinates: Coordinates,
-  mazeSettings: MazeSettings
+  mazeConfig: MazeConfig
 ): boolean => {
   const [x, y] = coordinates;
-  const { height, width } = mazeSettings;
+  const { height, width } = mazeConfig;
   return x >= 0 && x < width && y >= 0 && y < height;
 };
 

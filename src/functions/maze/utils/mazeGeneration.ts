@@ -1,5 +1,5 @@
-const mazeGeneration = (mazeSettings: MazeSettings): Maze => {
-  const { height, width } = mazeSettings;
+const mazeGeneration = (mazeConfig: MazeConfig): Maze => {
+  const { height, width } = mazeConfig;
 
   const maze = [];
 
@@ -13,7 +13,7 @@ const mazeGeneration = (mazeSettings: MazeSettings): Maze => {
     }
   }
 
-  return maze;
+  return { config: mazeConfig, cells: maze };
 };
 
 export default mazeGeneration;

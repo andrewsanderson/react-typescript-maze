@@ -3,8 +3,7 @@ import boundaryCheck from "./boundaryCheck";
 const findNeighbor = (
   maze: Maze,
   current: Cell,
-  direction: number,
-  mazeSettings: MazeSettings
+  direction: number
 ): Cell | undefined => {
   const goalCoordinates: Coordinates = [...current.coordinates];
   switch (direction) {
@@ -23,8 +22,8 @@ const findNeighbor = (
     default:
       break;
   }
-  const neighbor = boundaryCheck(goalCoordinates, mazeSettings)
-    ? maze.find((cell) => {
+  const neighbor = boundaryCheck(goalCoordinates, maze.config)
+    ? maze.cells.find((cell) => {
         return cell.coordinates.toString() === goalCoordinates.toString();
       })
     : undefined;
