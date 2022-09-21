@@ -3,7 +3,6 @@ import Cell from "./Cell";
 
 interface MazeProps {
   maze: Maze;
-  mazeSettings: MazeSettings;
 }
 
 const Row = styled.div`
@@ -11,14 +10,15 @@ const Row = styled.div`
 `;
 
 const Maze = (mazeProps: MazeProps) => {
-  const { maze, mazeSettings } = mazeProps;
-  const { height } = mazeSettings;
+  const { maze } = mazeProps;
+  const { cells, config } = maze;
+  const { height } = config;
   return (
     <>
       {[...Array(height).keys()].map((y) => {
         return (
           <Row key={`row-${y}`}>
-            {maze
+            {cells
               .filter((cell) => {
                 return cell.coordinates[0] === y;
               })
