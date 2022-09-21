@@ -1,10 +1,10 @@
 import React from "react";
 import styled from "styled-components";
 
-interface SettingsProps {
-  mazeSettingsState: [
-    MazeSettings,
-    React.Dispatch<React.SetStateAction<MazeSettings>>
+interface ConfigProps {
+  mazeConfigState: [
+    MazeConfig,
+    React.Dispatch<React.SetStateAction<MazeConfig>>
   ];
 }
 
@@ -13,7 +13,7 @@ const Label = styled.div`
   padding-right: 5px;
 `;
 
-const SettingsContainer = styled.div`
+const ConfigContainer = styled.div`
   display: flex;
   width: 100%;
   justify-content: center;
@@ -21,26 +21,25 @@ const SettingsContainer = styled.div`
   background-color: #e3e3e3;
 `;
 
-const Settings = (settingsProps: SettingsProps) => {
-  const { mazeSettingsState } = settingsProps;
+const Config = (ConfigProps: ConfigProps) => {
+  const { mazeConfigState } = ConfigProps;
 
-  const [mazeSettings, setMazeSettings] = mazeSettingsState;
+  const [mazeConfig, setMazeConfig] = mazeConfigState;
 
-  const { height, width } = mazeSettings;
+  const { height, width } = mazeConfig;
 
   const handleChange = (e: any) => {
-    const setting: keyof MazeSettings =
-      e.target.attributes["data-setting"].value;
+    const setting: keyof MazeConfig = e.target.attributes["data-setting"].value;
 
-    const newSettings: MazeSettings = { ...mazeSettings };
+    const newConfig: MazeConfig = { ...mazeConfig };
 
-    newSettings[setting] = parseInt(e.target.value);
+    newConfig[setting] = parseInt(e.target.value);
 
-    setMazeSettings(newSettings);
+    setMazeConfig(newConfig);
   };
 
   return (
-    <SettingsContainer>
+    <ConfigContainer>
       <Label>height</Label>
       <input
         type="number"
@@ -55,8 +54,8 @@ const Settings = (settingsProps: SettingsProps) => {
         defaultValue={width}
         onChange={handleChange}
       />
-    </SettingsContainer>
+    </ConfigContainer>
   );
 };
 
-export default Settings;
+export default Config;
