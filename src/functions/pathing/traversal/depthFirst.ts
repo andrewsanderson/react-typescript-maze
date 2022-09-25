@@ -2,11 +2,6 @@ import findNeighbor from "../../maze/utils/findNeighbor";
 import constructor from "./constructor";
 
 const depthFirst = () => {
-  // childAcquisition
-  // (maze, path)
-  // pathMutation
-  // (path,children)
-
   const childAcquisition = (maze: Maze, path: Path) => {
     const current: Cell = path.queued[0];
     const possibleChildren = [...Array(4).keys()].map((direction) => {
