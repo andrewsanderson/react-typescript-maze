@@ -1,7 +1,6 @@
 const iterative: LoopMethod = (
   startingCriteria: StartingCriteria,
-  winConditions: WinConditions,
-  loseConditions?: LoseConditions
+  winConditions: WinConditions
 ) => {
   const returnFn = (maze: Maze, traversalMethod: TraversalAlgorithm) => {
     const startingCell = startingCriteria(maze);
