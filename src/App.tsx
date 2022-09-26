@@ -1,25 +1,23 @@
 import { useEffect, useState } from "react";
 import "./App.css";
 import Settings from "./Components/Settings";
-import mazeGeneration from "./functions/maze/utils/mazeGeneration";
-import Maze from "./Components/Maze";
+import Maze from "./Models/Maze";
+import MazeGrid from "./Components/MazeGrid"
 
 function App() {
-  const [mazeConfig, setMazeConfig] = useState<MazeConfig>({
-    height: 5,
-    width: 5,
-  });
 
-  const [maze, setMaze] = useState<Maze>(mazeGeneration(mazeConfig));
+  const [width, setWidth] = useState<number>(5)
+  const [height, setHeight ] = useState<number>(5)
+  const [maze, setMaze] = useState<Maze>(new Maze({width, height}));
 
   useEffect(() => {
-    setMaze(mazeGeneration(mazeConfig));
-  }, [mazeConfig]);
+    setMaze(new Maze({width, height}));
+  }, [width, height]);
 
   return (
     <div className="App">
-      <Settings mazeConfigState={[mazeConfig, setMazeConfig]} />
-      <Maze maze={maze} />
+      <Settings width={width} setWidth={setWidth} height={height} setHeight={setHeight} />
+      <MazeGrid maze={maze} />
     </div>
   );
 }

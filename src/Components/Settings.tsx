@@ -2,10 +2,10 @@ import React from "react";
 import styled from "styled-components";
 
 interface ConfigProps {
-  mazeConfigState: [
-    MazeConfig,
-    React.Dispatch<React.SetStateAction<MazeConfig>>
-  ];
+  height: number,
+  setHeight: React.Dispatch<React.SetStateAction<number>>,
+  width: number,
+  setWidth: React.Dispatch<React.SetStateAction<number>>,
 }
 
 const Label = styled.div`
@@ -21,22 +21,7 @@ const ConfigContainer = styled.div`
   background-color: #e3e3e3;
 `;
 
-const Config = (ConfigProps: ConfigProps) => {
-  const { mazeConfigState } = ConfigProps;
-
-  const [mazeConfig, setMazeConfig] = mazeConfigState;
-
-  const { height, width } = mazeConfig;
-
-  const handleChange = (e: any) => {
-    const setting: keyof MazeConfig = e.target.attributes["data-setting"].value;
-
-    const newConfig: MazeConfig = { ...mazeConfig };
-
-    newConfig[setting] = parseInt(e.target.value);
-
-    setMazeConfig(newConfig);
-  };
+const Config = ({height, setHeight, width, setWidth}: ConfigProps) => {
 
   return (
     <ConfigContainer>
@@ -45,14 +30,14 @@ const Config = (ConfigProps: ConfigProps) => {
         type="number"
         data-setting="height"
         defaultValue={height}
-        onChange={handleChange}
+        onChange={e => setHeight(parseInt(e.target.value))}
       />
       <Label>width</Label>
       <input
         type="number"
         data-setting="width"
         defaultValue={width}
-        onChange={handleChange}
+        onChange={e => setWidth(parseInt(e.target.value))}
       />
     </ConfigContainer>
   );

@@ -1,28 +1,26 @@
 import styled from "styled-components";
-
+import Cell from "../Models/Cell"
 interface CellProps {
   cell: Cell;
 }
 
 const CellContainer = styled("div")<{ cell: Cell }>`
-  width: 40px;
-  height: 40px;
+  width: 60px;
+  height: 60px;
   border-top: ${(props) =>
-    props.cell.walls[0] ? "1px solid black" : "1px solid white"};
+    props.cell.neighbours.up ?  "1px solid transparent" : "1px solid black"};
   border-right: ${(props) =>
-    props.cell.walls[1] ? "1px solid black" : "1px solid white"};
+    props.cell.neighbours.right ?  "1px solid transparent" : "1px solid black"};
   border-bottom: ${(props) =>
-    props.cell.walls[2] ? "1px solid black" : "1px solid white"};
+    props.cell.neighbours.down ?  "1px solid transparent" : "1px solid black"};
   border-left: ${(props) =>
-    props.cell.walls[3] ? "1px solid black" : "1px solid white"};
+    props.cell.neighbours.left ?  "1px solid transparent" : "1px solid black"};
 `;
 
-const Cell = (cellProps: CellProps) => {
-  const { cell } = cellProps;
-  const { coordinates } = cell;
+const CellComponent = ({cell}: CellProps) => {
   return (
-    <CellContainer cell={cell}>{JSON.stringify(coordinates)}</CellContainer>
+    <CellContainer cell={cell}>{cell.coordinates.x}, {cell.coordinates.y}</CellContainer>
   );
 };
 
-export default Cell;
+export default CellComponent;
