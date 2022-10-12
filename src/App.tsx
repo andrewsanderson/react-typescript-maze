@@ -1,24 +1,18 @@
 import { useEffect, useState } from "react";
 import "./App.css";
-import Settings from "./Components/Settings";
-import mazeGeneration from "./functions/maze/utils/mazeGeneration";
+import Map, { WinConditions } from "./Models/Map";
+import randomisedDepthFirst from "./Algorithms/Generators/randomisedDepthFirst";
 import Maze from "./Components/Maze";
 
+const maze = new Map({ width: 5, height: 5 });
+const winConditions: WinConditions = (node) => {
+  return node.id === 24;
+};
+randomisedDepthFirst(maze, winConditions);
+
 function App() {
-  const [mazeConfig, setMazeConfig] = useState<MazeConfig>({
-    height: 5,
-    width: 5,
-  });
-
-  const [maze, setMaze] = useState<Maze>(mazeGeneration(mazeConfig));
-
-  useEffect(() => {
-    setMaze(mazeGeneration(mazeConfig));
-  }, [mazeConfig]);
-
   return (
     <div className="App">
-      <Settings mazeConfigState={[mazeConfig, setMazeConfig]} />
       <Maze maze={maze} />
     </div>
   );

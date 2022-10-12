@@ -1,28 +1,31 @@
 import styled from "styled-components";
+import Node, { Neighbors } from "../Models/Node";
 
 interface CellProps {
-  cell: Cell;
+  cell: Node;
 }
 
-const CellContainer = styled("div")<{ cell: Cell }>`
-  width: 40px;
-  height: 40px;
-  border-top: ${(props) =>
-    props.cell.walls[0] ? "1px solid black" : "1px solid white"};
-  border-right: ${(props) =>
-    props.cell.walls[1] ? "1px solid black" : "1px solid white"};
-  border-bottom: ${(props) =>
-    props.cell.walls[2] ? "1px solid black" : "1px solid white"};
-  border-left: ${(props) =>
-    props.cell.walls[3] ? "1px solid black" : "1px solid white"};
-`;
+const wallGenerator = (walls: Neighbors) => {
+  console.log(walls);
+  const wallWidthString = Object.values(walls).map((neighbor) => {
+    console.log(!!neighbor, neighbor);
+    return !!neighbor ? "0" : "1px";
+  });
+  return wallWidthString.join(" ") + ";";
+};
 
 const Cell = (cellProps: CellProps) => {
   const { cell } = cellProps;
-  const { coordinates } = cell;
-  return (
-    <CellContainer cell={cell}>{JSON.stringify(coordinates)}</CellContainer>
-  );
+
+  const Walls = styled("div")<{ cell: Node }>`
+    width: 40px;
+    height: 40px;
+    border-width: ${(props) => {
+      return wallGenerator(props.cell.neighbors);
+    }};
+  `;
+
+  return <Walls cell={cell}>{cell.id}</Walls>;
 };
 
 export default Cell;

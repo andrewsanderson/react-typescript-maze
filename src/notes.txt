@@ -1,14 +1,5 @@
-At the top level we have 'the loop method'
-    FN - while the win conditions aren't true
-    FN - while the lose conditions aren't true
-Below that we have the path Mutator
-    Var - take the current node (last in path)
-    FN - get it's children
-    FN - mutate the path the include the children where necessary
-    FN - run the child mutate
-Below that we have the optional node Mutator
-    This will take the current and future node
-    edit these two accordingly.
+Algorithm should consist of child acquisition
+then path mutation
 
-
-s
+The child acquisition stage will need context about the node, maze, and path,
+The path mutation stage will alter the path given the neighbors in a Nieghbor type format

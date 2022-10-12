@@ -1,5 +1,7 @@
-import Cell from "../Models/Cell";
-import Maze from "../Models/Maze";
+import Cell from "../../Models/Node";
+import Maze, { WinConditions } from "../../Models/Map";
+import { Neighbors } from "../../Models/Node";
+import { shuffle } from "../../utils";
 
 interface PathContext {
   queued: Array<Cell>;
@@ -8,7 +10,11 @@ interface PathContext {
 }
 
 // using iterative as default
-const depthFirst = (maze: Maze, _pathContext?: PathContext) => {
+const depthFirst = (
+  maze: Maze,
+  winConditions: WinConditions,
+  _pathContext?: PathContext
+) => {
   const pathContext = _pathContext || {
     queued: [maze.nodes[0]],
     current: [],
@@ -18,15 +24,17 @@ const depthFirst = (maze: Maze, _pathContext?: PathContext) => {
   const { queued, current, exhausted } = pathContext;
 
   while (
-    !maze.winConditions(queued[0]) &&
+    !winConditions(queued[0]) &&
     exhausted.length < maze.width * maze.height
   ) {
     const currentNode = queued.shift()!;
 
     // acquire children as array that are not null
-    const possibleChildren: Array<Cell> = Object.values(
-      currentNode.neighbors
-    ).filter((node): node is Cell => !!node);
+    const possibleChildren: Array<Cell> = Object.keys(currentNode.neighbors)
+      .map((direction) => {
+        return currentNode.findNeighbor(maze, direction as keyof Neighbors);
+      })
+      .filter((node): node is Cell => !!node);
 
     // filter children out that are already queued, in the current branch, already exhausted
     const useableChildren = possibleChildren.filter((child) => {
@@ -37,16 +45,19 @@ const depthFirst = (maze: Maze, _pathContext?: PathContext) => {
       );
     });
 
+    const shuffledChildren = shuffle(useableChildren);
+
     // if there is no useable children add the current ndoe to the exhausted queue
-    if (useableChildren.length === 0) {
+    if (shuffledChildren.length === 0) {
       exhausted.push(currentNode);
       // otherwise add the the first child to the queue and the current node to the current branch
     } else {
-      queued.push(useableChildren[0]);
+      currentNode.addNeighbour(shuffledChildren[0]);
+      queued.push(shuffledChildren[0]);
       current.push(currentNode);
     }
   }
-  console.log("fin", pathContext);
+  console.log("fin", maze);
 };
 
 export default depthFirst;

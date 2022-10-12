@@ -1,8 +1,9 @@
 import styled from "styled-components";
+import Map from "../Models/Map";
 import Cell from "./Cell";
 
 interface MazeProps {
-  maze: Maze;
+  maze: Map;
 }
 
 const Row = styled.div`
@@ -11,21 +12,17 @@ const Row = styled.div`
 
 const Maze = (mazeProps: MazeProps) => {
   const { maze } = mazeProps;
-  const { cells, config } = maze;
-  const { height } = config;
   return (
     <>
-      {[...Array(height).keys()].map((y) => {
+      {[...Array(maze.height).keys()].map((yVal) => {
         return (
-          <Row key={`row-${y}`}>
-            {cells
-              .filter((cell) => {
-                return cell.coordinates[0] === y;
+          <Row>
+            {maze.nodes
+              .filter((node) => {
+                return node.coordinates.y === yVal;
               })
-              .map((cell) => {
-                return (
-                  <Cell cell={cell} key={JSON.stringify(cell.coordinates)} />
-                );
+              .map((node) => {
+                return <Cell cell={node} />;
               })}
           </Row>
         );
@@ -33,4 +30,5 @@ const Maze = (mazeProps: MazeProps) => {
     </>
   );
 };
+
 export default Maze;
