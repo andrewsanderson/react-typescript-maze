@@ -1,4 +1,5 @@
 import Node from "./Node";
+import Path from "./Path";
 
 export type WinConditions = (node: Node) => boolean;
 
@@ -11,11 +12,13 @@ class Map {
   width = 0;
   height = 0;
   nodes: Array<Node> = [];
+  path: Path;
 
   constructor(config: Config) {
     this.width = config.width;
     this.height = config.height;
     this.initialise();
+    this.path = new Path(this, this.nodes[0]);
   }
 
   /**

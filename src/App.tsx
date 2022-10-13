@@ -3,17 +3,13 @@ import "./App.css";
 import Map, { WinConditions } from "./Models/Map";
 import randomisedDepthFirst from "./Algorithms/Generators/randomisedDepthFirst";
 import Maze from "./Components/Maze";
-
-const maze = new Map({ width: 5, height: 5 });
-const winConditions: WinConditions = (node) => {
-  return node.id === 24;
-};
-randomisedDepthFirst(maze, winConditions);
+import Path from "./Models/Path";
+import depthFirst from "./Algorithms/Solvers/depthFirstSimplified";
 
 function App() {
   return (
     <div className="App">
-      <Maze maze={maze} />
+      <Maze config={{ height: 5, width: 5 }} />
     </div>
   );
 }

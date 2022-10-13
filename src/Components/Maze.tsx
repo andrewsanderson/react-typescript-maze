@@ -1,28 +1,50 @@
+import { useEffect, useState, memo } from "react";
 import styled from "styled-components";
-import Map from "../Models/Map";
+import Map, { WinConditions } from "../Models/Map";
 import Cell from "./Cell";
-
-interface MazeProps {
-  maze: Map;
-}
+import randomisedDepthFirst from "../Algorithms/Generators/randomisedDepthFirst";
+import depthFirst from "../Algorithms/Solvers/depthFirstSimplified";
 
 const Row = styled.div`
   display: flex;
 `;
 
-const Maze = (mazeProps: MazeProps) => {
-  const { maze } = mazeProps;
+type MazeProps = {
+  config: {
+    height: number;
+    width: number;
+  };
+};
+
+const Maze = ({ config }: MazeProps) => {
+  const maze = new Map({ width: 5, height: 5 });
+
+  const winConditions: WinConditions = (node) => {
+    return node.id === 24;
+  };
+
+  randomisedDepthFirst(maze, winConditions);
+
+  const [mazeState, setMazeState] = useState<Map>(maze);
+
+  const step = () => {
+    setMazeState({ ...mazeState.path.step(depthFirst) } as Map);
+  };
+
   return (
     <>
-      {[...Array(maze.height).keys()].map((yVal) => {
+      <button onClick={step}>Step</button>
+      {JSON.stringify(config)}
+      {[...Array(mazeState.height).keys()].map((yVal) => {
         return (
           <Row>
-            {maze.nodes
+            {mazeState.nodes
               .filter((node) => {
                 return node.coordinates.y === yVal;
               })
               .map((node) => {
-                return <Cell cell={node} />;
+                const status = mazeState.path.getStatus(node.id);
+                return <Cell key={node.id} cell={node} status={status} />;
               })}
           </Row>
         );

@@ -1,3 +1,4 @@
+import e from "express";
 import Map from "./Map";
 
 export interface Coordinates {
@@ -12,30 +13,57 @@ export type Neighbors = {
   left: Node | null;
 };
 
+/**
+ *
+ * @param direction the initial direction.
+ *
+ * @returns the inverse of the provided 'direction' parameter as a string.
+ */
+const inverseDirection = (direction: keyof Neighbors): keyof Neighbors => {
+  switch (direction) {
+    case "up":
+      return "down";
+    case "right":
+      return "left";
+    case "down":
+      return "up";
+    case "left":
+      return "right";
+  }
+};
+
 class Node {
   id: number;
   coordinates: Coordinates;
-  neighbors: Neighbors;
-  constructor(id: number, coordinates: Coordinates, neighbors?: Neighbors) {
+  neighbors: Neighbors = {
+    up: null,
+    right: null,
+    down: null,
+    left: null,
+  };
+
+  constructor(id: number, coordinates: Coordinates) {
     this.id = id;
     this.coordinates = coordinates;
-    this.neighbors = neighbors || {
-      up: null,
-      right: null,
-      down: null,
-      left: null,
-    };
   }
 
-  NodeComparator(Node: Node) {
+  /**
+   *
+   * @param node the node to compare this one to.
+   * @returns true if they share x and y coordinates, otherwise it returns false.
+   */
+  compareToNode(node: Node): boolean {
     return (
-      Node.coordinates.x === this.coordinates.x &&
-      Node.coordinates.y === this.coordinates.y
+      node.coordinates.x === this.coordinates.x &&
+      node.coordinates.y === this.coordinates.y
     );
   }
 
   /**
-   * This finds neigubors based of the coordinates of the current node
+   *
+   * @param maze the maze the node exists within
+   * @param direction the direction from the current node of the neighbor we're searching for.
+   * @returns the neighboring cell if the node has one ni that direction, otherwise it returns null.
    */
   findNeighbor(maze: Map, direction: keyof Neighbors) {
     const neighborCoordinates = this.generateNeighborCoordinates(direction);
@@ -51,23 +79,9 @@ class Node {
 
   /**
    *
-   * @param direction the initial direction.
-   *
-   * @returns the inverse of the provide 'direction' parameter as a string.
+   * @param direction the direction from the current node we're generating coordinates for.
+   * @returns assumed coordinates of the neighbororing cell to the current node in the provided direction. Will not throw errors if coordinates are out of bounds.
    */
-  inverseDirection(direction: keyof Neighbors): keyof Neighbors {
-    switch (direction) {
-      case "up":
-        return "down";
-      case "right":
-        return "left";
-      case "down":
-        return "up";
-      case "left":
-        return "right";
-    }
-  }
-
   generateNeighborCoordinates(direction: keyof Neighbors) {
     let { x, y } = { ...this.coordinates };
     switch (direction) {
@@ -87,25 +101,32 @@ class Node {
     return { x, y };
   }
 
+  /**
+   *
+   * @param node the node we're looking to discern the direction of, when compared to the current node.
+   * @returns the direction of the supplied node if it is neighboring the current node, otherwise it will log the error.
+   */
   getNodeDirection(node: Node) {
     const xdif = this.coordinates.x - node.coordinates.x;
     const ydif = this.coordinates.y - node.coordinates.y;
 
-    switch ([xdif, ydif].toString()) {
-      // up
-      case [0, 1].toString():
-        return "up";
-      // right
-      case [-1, 0].toString():
-        return "right";
-      // down
-      case [0, -1].toString():
-        return "down";
-      // left
-      case [1, 0].toString():
-        return "left";
-      default:
-        console.log("OOB non-neighbor");
+    if (xdif > 1 || ydif > 1) {
+      console.log("OOB non-neighbor");
+    } else {
+      switch ([xdif, ydif].toString()) {
+        // up
+        case [0, 1].toString():
+          return "up";
+        // right
+        case [-1, 0].toString():
+          return "right";
+        // down
+        case [0, -1].toString():
+          return "down";
+        // left
+        case [1, 0].toString():
+          return "left";
+      }
     }
   }
 
@@ -116,7 +137,7 @@ class Node {
    */
   addNeighbour(Node: Node) {
     const direct = this.getNodeDirection(Node)!;
-    const inverse = this.inverseDirection(direct);
+    const inverse = inverseDirection(direct);
     this.neighbors[direct] = Node;
     if (!!Node) {
       Node.neighbors[inverse] = this;
