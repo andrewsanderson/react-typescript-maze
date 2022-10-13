@@ -23,10 +23,8 @@ const depthFirst = (
 
   const { queued, current, exhausted } = pathContext;
 
-  while (
-    !winConditions(queued[0]) &&
-    exhausted.length < maze.width * maze.height
-  ) {
+  console.log(pathContext);
+  while (exhausted.length < maze.width * maze.height) {
     const currentNode = queued.shift()!;
 
     // acquire children as array that are not null
@@ -50,6 +48,9 @@ const depthFirst = (
     // if there is no useable children add the current ndoe to the exhausted queue
     if (shuffledChildren.length === 0) {
       exhausted.push(currentNode);
+      if (queued.length === 0) {
+        queued.push(current.pop()!);
+      }
       // otherwise add the the first child to the queue and the current node to the current branch
     } else {
       currentNode.addNeighbour(shuffledChildren[0]);
@@ -57,7 +58,7 @@ const depthFirst = (
       current.push(currentNode);
     }
   }
-  console.log("fin", maze);
+  console.log("fin", pathContext);
 };
 
 export default depthFirst;
