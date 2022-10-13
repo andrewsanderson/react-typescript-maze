@@ -12,11 +12,14 @@ class Map {
   width = 0;
   height = 0;
   nodes: Array<Node> = [];
-  path: Path;
+  path?: Path;
 
   constructor(config: Config) {
     this.width = config.width;
     this.height = config.height;
+  }
+
+  init() {
     this.initialise();
     this.path = new Path(this, this.nodes[0]);
   }

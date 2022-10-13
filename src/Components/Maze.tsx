@@ -18,6 +18,7 @@ type MazeProps = {
 
 const Maze = ({ config }: MazeProps) => {
   const maze = new Map({ width: 5, height: 5 });
+  maze.init();
 
   const winConditions: WinConditions = (node) => {
     return node.id === 24;
@@ -28,7 +29,7 @@ const Maze = ({ config }: MazeProps) => {
   const [mazeState, setMazeState] = useState<Map>(maze);
 
   const step = () => {
-    setMazeState({ ...mazeState.path.step(depthFirst) } as Map);
+    setMazeState({ ...mazeState.path?.step(depthFirst) } as Map);
   };
 
   return (
@@ -43,7 +44,7 @@ const Maze = ({ config }: MazeProps) => {
                 return node.coordinates.y === yVal;
               })
               .map((node) => {
-                const status = mazeState.path.getStatus(node.id);
+                const status = mazeState.path?.getStatus(node.id);
                 return <Cell key={node.id} cell={node} status={status} />;
               })}
           </Row>

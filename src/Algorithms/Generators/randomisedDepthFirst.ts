@@ -23,7 +23,6 @@ const depthFirst = (
 
   const { queued, current, exhausted } = pathContext;
 
-  console.log(pathContext);
   while (exhausted.length < maze.width * maze.height) {
     const currentNode = queued.shift()!;
 

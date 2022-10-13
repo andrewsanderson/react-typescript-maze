@@ -34,6 +34,8 @@ class Path {
     }
   }
   backStep() {
+    this.exhausted.push(this.queued.pop()!);
+
     this.queued.push(this.current.pop()!);
   }
   forwardStep(pathMutation: PathMutation, children: Array<Node>) {
@@ -41,11 +43,14 @@ class Path {
     pathMutation(this, children);
   }
   step(solver: Solver) {
+    console.log("q", this);
     const { childAcquisition, pathMutation } = solver;
     const children = childAcquisition(this, this.maze);
+    console.log("c", children);
     if (children.length > 0) {
       this.forwardStep(pathMutation, children);
-    } else if (this.queued.length === 0) {
+    } else if (this.queued.length === 1) {
+      console.log(this.queued);
       this.backStep();
     }
     return this.maze;
