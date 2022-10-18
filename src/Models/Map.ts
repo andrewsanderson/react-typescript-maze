@@ -1,5 +1,5 @@
 import Node from "./Node";
-import Path from "./Path";
+import Pathing from "./Pathing";
 
 export type WinConditions = (node: Node) => boolean;
 
@@ -12,16 +12,13 @@ class Map {
   width = 0;
   height = 0;
   nodes: Array<Node> = [];
-  path?: Path;
+  pathing: Pathing;
 
   constructor(config: Config) {
     this.width = config.width;
     this.height = config.height;
-  }
-
-  init() {
     this.initialise();
-    this.path = new Path(this, this.nodes[0]);
+    this.pathing = new Pathing(this, this.nodes[0]);
   }
 
   /**

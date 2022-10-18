@@ -57,7 +57,6 @@ const depthFirst = (
       current.push(currentNode);
     }
   }
-  console.log("fin", pathContext);
 };
 
 export default depthFirst;

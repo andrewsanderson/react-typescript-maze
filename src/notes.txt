@@ -3,3 +3,7 @@ then path mutation
 
 The child acquisition stage will need context about the node, maze, and path,
 The path mutation stage will alter the path given the neighbors in a Nieghbor type format
+
+Solver:(Maze,stps?):Maze
+
+Iterative(ChildAcquisition, InsertChildren):Solver

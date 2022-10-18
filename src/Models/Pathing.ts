@@ -1,16 +1,16 @@
 import Map from "./Map";
 import Node from "./Node";
 
-type ChildAcquisition = (path: Path, maze: Map) => Array<Node>;
+type ChildAcquisition = (path: Pathing, maze: Map) => Array<Node>;
 
-type PathMutation = (path: Path, children: Array<Node>) => void;
+type PathMutation = (path: Pathing, children: Array<Node>) => void;
 
 export type Solver = {
   childAcquisition: ChildAcquisition;
   pathMutation: PathMutation;
 };
 
-class Path {
+class Pathing {
   maze: Map;
   queued: Array<Node> = [];
   current: Array<Node> = [];
@@ -27,7 +27,7 @@ class Path {
         })
       ) {
         return Object.keys(this).find((key) => {
-          const keys: keyof Path = key as keyof Path;
+          const keys: keyof Pathing = key as keyof Pathing;
           return this[keys] === queue;
         });
       }
@@ -43,10 +43,8 @@ class Path {
     pathMutation(this, children);
   }
   step(solver: Solver) {
-    console.log("q", this);
     const { childAcquisition, pathMutation } = solver;
     const children = childAcquisition(this, this.maze);
-    console.log("c", children);
     if (children.length > 0) {
       this.forwardStep(pathMutation, children);
     } else if (this.queued.length === 1) {
@@ -57,4 +55,4 @@ class Path {
   }
 }
 
-export default Path;
+export default Pathing;
