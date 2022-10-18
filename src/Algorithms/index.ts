@@ -10,17 +10,22 @@ type Conditions = {
   win: (maze: Map) => boolean;
   lose: (maze: Map) => boolean;
 };
-export type Solver = {
-  childAcquisition: ChildAcquisition;
-  pathMutation: PathMutation;
-};
 
+/**
+ *
+ * @param param0 the pathing object we're backstepping through.
+ */
 const backStep = ({ exhausted, queued, current }: Pathing) => {
   exhausted.push(queued.pop()!);
-
   queued.push(current.pop()!);
 };
 
+/**
+ *
+ * @param pathMutation how we're inserting the children into the path.
+ * @param pathing the path we're mutating with the path mutation
+ * @param children the children we're potentially inserting into the path
+ */
 const forwardStep = (
   pathMutation: PathMutation,
   pathing: Pathing,
@@ -31,6 +36,12 @@ const forwardStep = (
   pathMutation(pathing, children);
 };
 
+/**
+ *
+ * @param childAcquisition how we're acquiring cihldrem, given the current node.
+ * @param pathMutation how we're inserting the children into the path.
+ * @returns a function that, when provided a maze and lose/win conditions, will iterate through the maze.
+ */
 export const IterativeConstructor = (
   childAcquisition: ChildAcquisition,
   pathMutation: PathMutation
@@ -39,7 +50,7 @@ export const IterativeConstructor = (
     const { win, lose } = coniditions;
     while (!lose(maze) && !win(maze)) {
       const { pathing } = maze;
-      const { queued, current, exhausted } = pathing;
+      const { queued } = pathing;
       const children = childAcquisition(pathing, maze);
       if (children.length > 0) {
         forwardStep(pathMutation, pathing, children);
@@ -52,6 +63,12 @@ export const IterativeConstructor = (
   return iterative;
 };
 
+/**
+ *
+ * @param childAcquisition how we're acquiring cihldrem, given the current node.
+ * @param pathMutation how we're inserting the children into the path.
+ * @returns a function that, when provided a maze and lose/win conditions, will iterate through the maze.
+ */
 export const RecursiveConstructor = (
   childAcquisition: ChildAcquisition,
   pathMutation: PathMutation
@@ -62,7 +79,7 @@ export const RecursiveConstructor = (
       return maze;
     } else {
       const { pathing } = maze;
-      const { queued, current, exhausted } = pathing;
+      const { queued } = pathing;
       const children = childAcquisition(pathing, maze);
       if (children.length > 0) {
         forwardStep(pathMutation, pathing, children);

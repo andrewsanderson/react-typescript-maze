@@ -1,10 +1,10 @@
-import { useEffect, useState, memo } from "react";
+import { useState } from "react";
 import styled from "styled-components";
 import Map, { WinConditions } from "../Models/Map";
 import Cell from "./Cell";
 import randomisedDepthFirst from "../Algorithms/Generators/randomisedDepthFirst";
-import depthFirst from "../Algorithms/Solvers/iterativedepthFirstSimplified";
-import depthFirstR from "../Algorithms/Solvers/recursivedepthFirstSimplified";
+import depthFirst from "../Algorithms/Solvers/iterativedfs";
+import depthFirstR from "../Algorithms/Solvers/recursivedfs";
 
 const Row = styled.div`
   display: flex;
@@ -28,11 +28,12 @@ const winConditions = (maze: Map) => {
 const conditions = { win: winConditions, lose: loseConditions };
 
 const Maze = ({ config }: MazeProps) => {
-  console.log("rerender");
-  const maze = new Map({ width: 5, height: 5 });
+  const width = 12;
+  const height = 12;
+  const maze = new Map({ width: width, height: height });
 
   const winConditions: WinConditions = (node) => {
-    return node.id === 24;
+    return node.id === width * height - 1;
   };
 
   randomisedDepthFirst(maze, winConditions);
