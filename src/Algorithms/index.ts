@@ -16,8 +16,12 @@ type Conditions = {
  * @param param0 the pathing object we're backstepping through.
  */
 const backStep = ({ exhausted, queued, current }: Pathing) => {
-  exhausted.push(queued.pop()!);
-  queued.push(current.pop()!);
+  console.log("q", { exhausted, queued, current });
+  exhausted.push(queued.shift()!);
+
+  if (queued.length === 0) {
+    queued.push(current.pop()!);
+  }
 };
 
 /**
@@ -46,15 +50,15 @@ export const IterativeConstructor = (
   childAcquisition: ChildAcquisition,
   pathMutation: PathMutation
 ) => {
-  const iterative = (maze: Map, coniditions: Conditions) => {
-    const { win, lose } = coniditions;
+  const iterative = (maze: Map, conditions: Conditions) => {
+    const { win, lose } = conditions;
     while (!lose(maze) && !win(maze)) {
       const { pathing } = maze;
       const { queued } = pathing;
       const children = childAcquisition(pathing, maze);
       if (children.length > 0) {
         forwardStep(pathMutation, pathing, children);
-      } else if (queued.length === 1) {
+      } else {
         backStep(pathing);
       }
     }

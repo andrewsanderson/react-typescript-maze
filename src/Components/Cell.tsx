@@ -8,7 +8,7 @@ interface CellProps {
   status: string | undefined;
 }
 
-const Walls = styled("div")<{ cell: Node }>`
+const Walls = styled("div")<{ cell: Node; status: string | undefined }>`
   width: 40px;
   height: 40px;
   border-width: 1px;
@@ -16,20 +16,33 @@ const Walls = styled("div")<{ cell: Node }>`
     return wallGenerator(props.cell.neighbors);
   }};
   border-style: solid;
+  background-color: ${(props) => {
+    return bgGenerator(props.status);
+  }};
 `;
 
 const wallGenerator = (neighbors: Neighbors) => {
   const wallWidthString = Object.values(neighbors).map((neighbor) => {
-    return !!neighbor ? "white" : "black";
+    return !!neighbor ? "rgba(255,255,255,0)" : "black";
   });
   return wallWidthString.join(" ");
 };
 
+const bgGenerator = (status: string | undefined) => {
+  switch (status) {
+    case "current":
+      return "red";
+    case "exhausted":
+      return "gray";
+    case "queued":
+      return "blue";
+  }
+};
+
 const Cell = ({ cell, status }: CellProps) => {
   return (
-    <Walls cell={cell}>
+    <Walls cell={cell} status={status}>
       {cell.id}
-      <div style={{ fontSize: "8px" }}>{status}</div>
     </Walls>
   );
 };

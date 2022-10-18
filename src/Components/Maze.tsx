@@ -4,7 +4,7 @@ import Map, { WinConditions } from "../Models/Map";
 import Cell from "./Cell";
 import randomisedDepthFirst from "../Algorithms/Generators/randomisedDepthFirst";
 import depthFirst from "../Algorithms/Solvers/iterativedfs";
-import depthFirstR from "../Algorithms/Solvers/recursivedfs";
+import depthFirstR from "../Algorithms/Solvers/iterativebfs";
 
 const Row = styled.div`
   display: flex;
