@@ -1,5 +1,3 @@
-export {};
-
 // Generating:
 // time taken
 // stack size
@@ -7,6 +5,11 @@ export {};
 // Solving:
 // stack Size
 // time taken
-//
 
 // first or best
+
+const Debug = () => {
+  return <></>;
+};
+
+export default Debug;

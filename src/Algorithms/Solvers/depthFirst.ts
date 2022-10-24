@@ -8,7 +8,7 @@ const childAcquisition = (maze: Graph) => {
   const { pathing } = maze;
   const { queued, current, exhausted } = pathing;
 
-  const currentNode = queued[0];
+  const currentNode = pathing.getCurrentNode();
 
   // acquire children as array that are not null
   const possibleChildren: Array<Node> = Object.values(
