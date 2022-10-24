@@ -50,19 +50,21 @@ const Maze = ({ config }: MazeProps) => {
     <>
       <Settings settingsState={settings} />
       <MazeContainer>
-        {[...Array(mazeState.height).keys()].map((yVal) => {
-          return (
-            <Row key={yVal}>
-              {mazeState.cells
-                .filter((cell) => {
-                  return cell.coordinates.y === yVal;
-                })
-                .map((cell) => {
-                  return <Cell key={cell.id} cell={cell} />;
-                })}
-            </Row>
-          );
-        })}
+        <div style={{ border: "2px solid black" }}>
+          {[...Array(mazeState.height).keys()].map((yVal) => {
+            return (
+              <Row key={yVal}>
+                {mazeState.cells
+                  .filter((cell) => {
+                    return cell.coordinates.y === yVal;
+                  })
+                  .map((cell) => {
+                    return <Cell key={cell.id} cell={cell} />;
+                  })}
+              </Row>
+            );
+          })}
+        </div>
       </MazeContainer>
     </>
   );
