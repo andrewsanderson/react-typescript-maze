@@ -1,13 +1,13 @@
-import Map from "./Map";
-import Node from "./Node";
+import Map from "./Graph";
+import Node from "./Cell";
 
-type ChildAcquisition = (path: Pathing, maze: Map) => Array<Node>;
+type GetChildNodes = (path: Pathing) => Array<Node>;
 
-type PathMutation = (path: Pathing, children: Array<Node>) => void;
+type InsertChildNodes = (path: Pathing, children: Array<Node>) => void;
 
-export type Solver = {
-  childAcquisition: ChildAcquisition;
-  pathMutation: PathMutation;
+export type SolutionFinder = {
+  getChildNodes: GetChildNodes;
+  insertChildNodes: InsertChildNodes;
 };
 
 class Pathing {
@@ -15,10 +15,34 @@ class Pathing {
   queued: Array<Node> = [];
   current: Array<Node> = [];
   exhausted: Array<Node> = [];
+  errors: Array<"string"> = [];
+  solutions: Array<Array<Node>> = [];
   constructor(maze: Map, startingNode: Node) {
     this.maze = maze;
     this.queued = [startingNode];
   }
+
+  getCurrentNode() {
+    return this.current.at(-1)!;
+  }
+
+  getCurrentPath() {
+    return [...this.current];
+  }
+
+  getSolutions(nodeId: number) {
+    const solutionsIncludingNode: Array<number> = [];
+    for (const [index, solution] of this.solutions.entries()) {
+      for (const node of solution) {
+        if (node.id === nodeId) {
+          solutionsIncludingNode.push(index);
+        }
+      }
+    }
+    return solutionsIncludingNode;
+  }
+
+  // returns the status of the node by it's id.
   getStatus(id: number) {
     for (const queue of [this.queued, this.current, this.exhausted]) {
       if (
@@ -32,26 +56,6 @@ class Pathing {
         });
       }
     }
-  }
-  backStep() {
-    this.exhausted.push(this.queued.pop()!);
-
-    this.queued.push(this.current.pop()!);
-  }
-  forwardStep(pathMutation: PathMutation, children: Array<Node>) {
-    this.current.push(this.queued.shift()!);
-    pathMutation(this, children);
-  }
-  step(solver: Solver) {
-    const { childAcquisition, pathMutation } = solver;
-    const children = childAcquisition(this, this.maze);
-    if (children.length > 0) {
-      this.forwardStep(pathMutation, children);
-    } else if (this.queued.length === 1) {
-      console.log(this.queued);
-      this.backStep();
-    }
-    return this.maze;
   }
 }
 

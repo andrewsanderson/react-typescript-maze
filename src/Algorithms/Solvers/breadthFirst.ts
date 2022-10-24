@@ -1,13 +1,14 @@
 import Pathing from "../../Models/Pathing";
-import Map from "../../Models/Map";
-import Node from "../../Models/Node";
-import { RecursiveConstructor } from "..";
+import Node from "../../Models/Cell";
+import Graph from "../../Models/Graph";
+import { algorithmConstructor } from "../Framework";
+import defaultSolution from "./defaultSolution";
 
-const childAcquisition = (path: Pathing, maze: Map) => {
-  console.log("path", path);
-  const { queued, current, exhausted } = path;
+const childAcquisition = (maze: Graph) => {
+  const { pathing } = maze;
+  const { queued, current, exhausted } = pathing;
 
-  const currentNode = queued[0];
+  const currentNode = pathing.getCurrentNode();
 
   // acquire children as array that are not null
   const possibleChildren: Array<Node> = Object.values(
@@ -25,7 +26,11 @@ const childAcquisition = (path: Pathing, maze: Map) => {
   return useableChildren;
 };
 const pathMutation = (path: Pathing, children: Array<Node>) => {
-  path.queued.push(children[0]);
+  path.queued.push(...children);
 };
 
-export default RecursiveConstructor(childAcquisition, pathMutation);
+const breadthFirst = (constructor: algorithmConstructor) => {
+  return constructor(childAcquisition, pathMutation, defaultSolution);
+};
+
+export default breadthFirst;

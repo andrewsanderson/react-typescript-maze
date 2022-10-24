@@ -1,10 +1,12 @@
 import Pathing from "../../Models/Pathing";
-import Map from "../../Models/Map";
-import Node from "../../Models/Node";
-import { IterativeConstructor } from "../index";
+import Node from "../../Models/Cell";
+import Graph from "../../Models/Graph";
+import { algorithmConstructor } from "../Framework";
+import defaultSolution from "./defaultSolution";
 
-const childAcquisition = (path: Pathing, maze: Map) => {
-  const { queued, current, exhausted } = path;
+const childAcquisition = (maze: Graph) => {
+  const { pathing } = maze;
+  const { queued, current, exhausted } = pathing;
 
   const currentNode = queued[0];
 
@@ -24,7 +26,11 @@ const childAcquisition = (path: Pathing, maze: Map) => {
   return useableChildren;
 };
 const pathMutation = (path: Pathing, children: Array<Node>) => {
-  path.queued.push(...children);
+  path.queued.push(children[0]);
 };
 
-export default IterativeConstructor(childAcquisition, pathMutation);
+const depthFirst = (constructor: algorithmConstructor) => {
+  return constructor(childAcquisition, pathMutation, defaultSolution);
+};
+
+export default depthFirst;

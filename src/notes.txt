@@ -4,6 +4,94 @@ then path mutation
 The child acquisition stage will need context about the node, maze, and path,
 The path mutation stage will alter the path given the neighbors in a Nieghbor type format
 
-Solver:(Maze,stps?):Maze
+change so that the win conditions are that every node is explored
+each time a new solution is found 
 
-Iterative(ChildAcquisition, InsertChildren):Solver
+
+transition the Algorithm towards a utility library and away from class based components
+
+
+
+
+/**
+ *
+ * @param param0 the pathing object we're backstepping through.
+ */
+const backStep = (pathing: Pathing) => {
+  const { exhausted, queued, current } = pathing;
+  exhausted.push(queued.shift()!);
+
+  if (queued.length === 0) {
+    queued.push(current.pop()!);
+  }
+};
+
+/**
+ *
+ * @param insertChildNodes how we're inserting the children into the path.
+ * @param pathing the path we're mutating with the path mutation
+ * @param children the children we're potentially inserting into the path
+ */
+const forwardStep = (
+  insertChildNodes: PathMutation,
+  pathing: Pathing,
+  children: Array<Node>
+) => {
+  const { queued, current } = pathing;
+  current.push(queued.shift()!);
+  insertChildNodes(pathing, children);
+};
+
+/**
+ *
+ * @param getChildNodes how we're acquiring cihldrem, given the current node.
+ * @param insertChildNodes how we're inserting the children into the path.
+ * @returns a function that, when provided a maze and lose/win conditions, will iterate through the maze.
+ */
+export const IterativeConstructor = (
+  getChildNodes: GetChildNodes,
+  insertChildNodes: InsertChildNodes
+) => {
+  const iterative = (maze: Map, conditions: Conditions) => {
+    const { win, lose } = conditions;
+    while (!lose(maze) && !win(maze)) {
+      const { pathing } = maze;
+      const children = getChildNodes(pathing);
+      if (children.length > 0) {
+        forwardStep(insertChildNodes, pathing, children);
+      } else {
+        backStep(pathing);
+      }
+    }
+    return maze;
+  };
+  return iterative;
+};
+
+/**
+ *
+ * @param getChildNodes how we're acquiring cihldrem, given the current node.
+ * @param insertChildNodes how we're inserting the children into the path.
+ * @returns a function that, when provided a maze and lose/win conditions, will iterate through the maze.
+ */
+export const RecursiveConstructor = (
+  getChildNodes: GetChildNodes,
+  insertChildNodes: InsertChildNodes
+) => {
+  const recursive = (maze: Map, conditions: Conditions): Map => {
+    const { win, lose } = conditions;
+    if (lose(maze) || win(maze)) {
+      return maze;
+    } else {
+      const { pathing } = maze;
+      const children = getChildNodes(pathing);
+      if (children.length > 0) {
+        forwardStep(insertChildNodes, pathing, children);
+      } else {
+        backStep(pathing);
+      }
+      return recursive(maze, conditions);
+    }
+  };
+  return recursive;
+};

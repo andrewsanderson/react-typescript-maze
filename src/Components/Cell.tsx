@@ -1,14 +1,15 @@
-import { useEffect } from "react";
 import styled from "styled-components";
-import Node, { Neighbors } from "../Models/Node";
-import { memo } from "react";
+import Node, { Neighbors } from "../Models/Cell";
 
 interface CellProps {
   cell: Node;
-  status: string | undefined;
 }
 
-const Walls = styled("div")<{ cell: Node; status: string | undefined }>`
+const Walls = styled("div")<{
+  cell: Node;
+  status: string | undefined;
+  solutions: Array<number>;
+}>`
   width: 40px;
   height: 40px;
   border-width: 1px;
@@ -18,6 +19,9 @@ const Walls = styled("div")<{ cell: Node; status: string | undefined }>`
   border-style: solid;
   background-color: ${(props) => {
     return bgGenerator(props.status);
+  }};
+  background-color: ${(props) => {
+    return props.solutions[0] !== undefined ? "green" : "white";
   }};
 `;
 
@@ -33,15 +37,18 @@ const bgGenerator = (status: string | undefined) => {
     case "current":
       return "red";
     case "exhausted":
-      return "gray";
+      return "lightgray";
     case "queued":
       return "blue";
   }
 };
 
-const Cell = ({ cell, status }: CellProps) => {
+const Cell = ({ cell }: CellProps) => {
+  const status = cell.maze.pathing.getStatus(cell.id);
+  const solutions = cell.maze.pathing.getSolutions(cell.id);
+  console.log("s", solutions);
   return (
-    <Walls cell={cell} status={status}>
+    <Walls cell={cell} status={status} solutions={solutions}>
       {cell.id}
     </Walls>
   );
