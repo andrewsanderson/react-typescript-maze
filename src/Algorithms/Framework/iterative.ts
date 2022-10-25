@@ -7,13 +7,13 @@ const iterativeConstructor = (
   insertChildNodes: InsertChildNodes,
   solver?: (maze: Graph) => boolean
 ) => {
-  const returnFn = (maze: Graph) => {
-    while (!allNodesExplored(maze)) {
+  const returnFn = (maze: Graph, steps?: number) => {
+    let i = !!steps ? steps : 999;
+    while (!allNodesExplored(maze) && i > 0) {
       const { current, queued } = maze.pathing;
       current.push(queued.shift()!);
       if (!!solver && solver(maze)) {
         maze.pathing.solutions.push(maze.pathing.getCurrentPath());
-        console.log("sol", maze.pathing.solutions);
       }
 
       const children = getChildNodes(maze)!;
@@ -22,6 +22,7 @@ const iterativeConstructor = (
       } else {
         backStep(maze.pathing);
       }
+      i--;
     }
     return maze;
   };

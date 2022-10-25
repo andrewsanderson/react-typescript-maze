@@ -25,13 +25,13 @@ const Walls = styled("div")<{
 
 const wallGenerator = (neighbors: Neighbors) => {
   const walls = [
-    "0 -1px 0 0 #000000",
-    "1px 0 0 0 #000000",
-    "0 1px 0 0 #000000",
-    "-1px 0 0 0 #000000",
+    "0 -1px 0 0 white",
+    "1px 0 0 0 white",
+    "0 1px 0 0 white",
+    "-1px 0 0 0 white",
   ];
   const wallWidthString = Object.values(neighbors).map((neighbor, index) => {
-    return !!neighbor ? "0 0 0 0 #000000" : walls[index];
+    return !!neighbor ? "0 0 0 0 white" : walls[index];
   });
   return wallWidthString.join(", ");
 };
@@ -50,7 +50,6 @@ const bgGenerator = (status: string | undefined) => {
 const Cell = ({ cell }: CellProps) => {
   const status = cell.maze.pathing.getStatus(cell.id);
   const solutions = cell.maze.pathing.getSolutions(cell.id);
-  console.log("s", solutions);
   return <Walls cell={cell} status={status} solutions={solutions}></Walls>;
 };
 

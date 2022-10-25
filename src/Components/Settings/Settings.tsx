@@ -1,28 +1,26 @@
+import { BaseSyntheticEvent } from "react";
 import styled from "styled-components";
-import { Iterative, Recursive } from "../../Algorithms/Framework";
-import iterativeConstructor from "../../Algorithms/Framework/iterative";
-import recursiveConstructor from "../../Algorithms/Framework/recursive";
-import randomisedDepthFirst from "../../Algorithms/Generators/randomisedDepthFirst";
-import breadthFirst from "../../Algorithms/Solvers/breadthFirst";
-import depthFirst from "../../Algorithms/Solvers/depthFirst";
-import { settings } from "../Maze";
 
-const options = {
-  algorithmTypes: [
-    { title: "Recursive", fn: recursiveConstructor },
-    { title: "Iterative", fn: iterativeConstructor },
-  ],
-  solvers: [
-    { title: "breadthFirst", fn: breadthFirst },
-    { title: "depthFirst", fn: depthFirst },
-  ],
-  generators: [{ title: "randomisedDepthFirst", fn: randomisedDepthFirst }],
-};
+import { settings } from "../Maze";
+import { options } from "./options";
+import {
+  Button,
+  Slider,
+  Typography,
+  FormControl,
+  Select,
+  InputLabel,
+  MenuItem,
+  FormGroup,
+  FormControlLabel,
+  Checkbox,
+} from "@mui/material";
 
 const Container = styled("div")`
   padding: 40px 20px;
   display: flex;
   justify-content: space-evenly;
+  flex-direction: column;
 `;
 
 interface SettingsProps {
@@ -34,58 +32,75 @@ const Settings = ({ settingsState }: SettingsProps) => {
 
   // height & width = counter
   // solver iterative/recursive = dropdwon
-  // generator iterative/recursive= dropdown
+  // generator iterative/recursive = dropdown
 
-  const handleSolverChange = (e) => {
+  const handleSolverChange = (e: BaseSyntheticEvent) => {
     console.log(e);
   };
 
   return (
     <Container>
-      <label>
-        Maze Solver:
-        <select value={"bread"} onChange={handleSolverChange}>
+      <div style={{ padding: "10px", display: "flex", width: "500px" }}>
+        <Typography id="input-slider" gutterBottom>
+          Width
+        </Typography>
+        <Slider aria-label="Volume" value={5} />
+        <Typography id="input-slider" gutterBottom>
+          Height
+        </Typography>
+        <Slider aria-label="Volume" value={5} />
+      </div>
+
+      <FormControl fullWidth style={{ margin: "5px" }}>
+        <InputLabel id="demo-simple-select-label">Repetition</InputLabel>
+        <Select
+          labelId="demo-simple-select-label"
+          id="demo-simple-select"
+          label="Generation Algorithm"
+          variant="standard"
+        >
           {options.algorithmTypes.map((algorithmType) => {
-            return (
-              <optgroup label={algorithmType.title}>
-                {options.solvers.map((solver) => {
-                  return (
-                    <option key={solver.title} value={solver.title}>
-                      {algorithmType.title} {solver.title}
-                    </option>
-                  );
-                })}
-              </optgroup>
-            );
+            return <MenuItem value={10}>{algorithmType.title}</MenuItem>;
           })}
-        </select>
-      </label>
-      <label>
-        Maze Generator:
-        <select value={"bread"} onChange={handleSolverChange}>
+        </Select>
+      </FormControl>
+      <FormGroup sx={{ display: "flex", flexDirection: "row" }}>
+        <FormControlLabel
+          control={<Checkbox name="iterative" />}
+          label="Iterative"
+        />
+        <FormControlLabel
+          control={<Checkbox name="recursive" />}
+          label="Recursive"
+        />
+      </FormGroup>
+      <FormControl fullWidth style={{ margin: "5px" }}>
+        <InputLabel id="demo-simple-select-label">Repetition</InputLabel>
+        <Select
+          labelId="demo-simple-select-label"
+          id="demo-simple-select"
+          label="Generation Algorithm"
+          variant="standard"
+        >
           {options.algorithmTypes.map((algorithmType) => {
-            return (
-              <optgroup label={algorithmType.title}>
-                {options.generators.map((generator) => {
-                  return (
-                    <option key={generator.title} value={generator.title}>
-                      {algorithmType.title} {generator.title}
-                    </option>
-                  );
-                })}
-              </optgroup>
-            );
+            return <MenuItem value={10}>{algorithmType.title}</MenuItem>;
           })}
-        </select>
-      </label>
-      <label>
-        Maze Width
-        <input type="number" />
-      </label>
-      <label>
-        Maze Height
-        <input type="number" />
-      </label>
+        </Select>
+      </FormControl>
+      <FormGroup sx={{ display: "flex", flexDirection: "row" }}>
+        <FormControlLabel
+          control={<Checkbox name="iterative" />}
+          label="Iterative"
+        />
+        <FormControlLabel
+          control={<Checkbox name="recursive" />}
+          label="Recursive"
+        />
+      </FormGroup>
+      <div style={{ padding: "10px", display: "flex" }}>
+        <Button variant="outlined">Step</Button>
+        <Button variant="outlined">Solve</Button>
+      </div>
     </Container>
   );
 };
