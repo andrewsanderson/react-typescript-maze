@@ -23,9 +23,12 @@ export type settings = {
 const Wrapper = styled("div")`
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: space-evenly;
   align-content: center;
   height: 100%;
+
+  padding-left: 10%;
+  padding-right: 10%;
 `;
 
 type MazeProps = {
