@@ -10,8 +10,8 @@ const Walls = styled("div")<{
   status: string | undefined;
   solutions: Array<number>;
 }>`
-  width: 40px;
-  height: 40px;
+  width: 20px;
+  height: 20px;
   box-shadow: ${(props) => {
     return wallGenerator(props.cell.neighbors);
   }};

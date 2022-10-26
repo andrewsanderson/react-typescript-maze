@@ -36,14 +36,22 @@ const Settings = ({ settingsState }: SettingsProps) => {
   // solver iterative/recursive = dropdwon
   // generator iterative/recursive = dropdown
 
-  const handleSolverChange = (e: BaseSyntheticEvent) => {
+  const handleSolverChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     console.log(e);
+  };
+
+  const handleDimensionChange = (
+    e: Event,
+    newValue: number | number[],
+    name: string
+  ) => {
+    setSettings({ ...settings, [name]: newValue });
   };
 
   return (
     <Container>
       <FormSection>
-        <Typography id="input-slider" variant="h4" gutterBottom>
+        <Typography id="maze-settings-header" variant="h4">
           Maze Settings
         </Typography>
         <div style={{ padding: "10px", display: "flex", width: "500px" }}>
@@ -54,7 +62,18 @@ const Settings = ({ settingsState }: SettingsProps) => {
           >
             Width
           </Typography>
-          <Slider aria-label="Volume" value={5} />
+          <Slider
+            aria-label="Volume"
+            value={settings.width}
+            onChange={(e, v) => {
+              handleDimensionChange(e, v, "width");
+            }}
+            name="width"
+            step={1}
+            min={2}
+            max={20}
+            valueLabelDisplay="auto"
+          />
           <Typography
             id="input-slider"
             gutterBottom
@@ -62,7 +81,18 @@ const Settings = ({ settingsState }: SettingsProps) => {
           >
             Height
           </Typography>
-          <Slider aria-label="Volume" value={5} />
+          <Slider
+            aria-label="Volume"
+            value={settings.height}
+            onChange={(e, v) => {
+              handleDimensionChange(e, v, "height");
+            }}
+            name="height"
+            step={1}
+            min={2}
+            max={20}
+            valueLabelDisplay="auto"
+          />
         </div>
       </FormSection>
       <FormSection>
@@ -81,17 +111,6 @@ const Settings = ({ settingsState }: SettingsProps) => {
             })}
           </Select>
         </FormControl>
-
-        <FormGroup sx={{ display: "flex", flexDirection: "row" }}>
-          <FormControlLabel
-            control={<Checkbox name="iterative" />}
-            label="Iterative"
-          />
-          <FormControlLabel
-            control={<Checkbox name="recursive" />}
-            label="Recursive"
-          />
-        </FormGroup>
       </FormSection>
       <FormSection>
         <InputLabel>Solver</InputLabel>
@@ -109,16 +128,6 @@ const Settings = ({ settingsState }: SettingsProps) => {
             })}
           </Select>
         </FormControl>
-        <FormGroup sx={{ display: "flex", flexDirection: "row" }}>
-          <FormControlLabel
-            control={<Checkbox name="iterative" />}
-            label="Iterative"
-          />
-          <FormControlLabel
-            control={<Checkbox name="recursive" />}
-            label="Recursive"
-          />
-        </FormGroup>
       </FormSection>
       <FormSection>
         <div

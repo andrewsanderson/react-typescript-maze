@@ -7,7 +7,7 @@ const iterativeConstructor = (
   insertChildNodes: InsertChildNodes,
   solver?: (maze: Graph) => boolean
 ) => {
-  const returnFn = (maze: Graph, steps?: number) => {
+  const returnFn = (maze: Graph, steps?: number): Graph => {
     let i = !!steps ? steps : 999;
     while (!allNodesExplored(maze) && i > 0) {
       const { current, queued } = maze.pathing;

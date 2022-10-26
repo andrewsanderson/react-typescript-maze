@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import styled from "styled-components";
 import Graph from "../Models/Graph";
 import Cell from "./Cell";
@@ -31,36 +31,38 @@ const Wrapper = styled("div")`
   padding-right: 10%;
 `;
 
-type MazeProps = {
-  config: {
-    height: number;
-    width: number;
-  };
-};
+const MazeContainer = styled("div")`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-width: 50%;
+  min-width: 50%;
+`;
+const MazeBorder = styled("div")`
+  border: 2px solid ${common.white};
+`;
 
-const Maze = ({ config }: MazeProps) => {
+const Maze = () => {
   const settings = useState<settings>({
     width: 6,
     height: 6,
     solver: randomisedDepthFirst(iterativeConstructor),
     generator: randomisedDepthFirst(iterativeConstructor),
   });
-  const MazeContainer = styled("div")`
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  `;
-  const MazeBorder = styled("div")`
-    border: 2px solid ${common.white};
-  `;
-  const width = 8;
-  const height = 8;
-  const maze = new Graph({ width: width, height: height });
+  const [mazeState, setMazeState] = useState<Graph>(
+    new Graph({
+      width: settings[0].width,
+      height: settings[0].height,
+    })
+  );
 
-  randomisedDepthFirst(iterativeConstructor)(maze);
-  maze.resetPath();
-
-  const [mazeState, setMazeState] = useState<Graph>(maze);
+  useEffect(() => {
+    const newState = new Graph({
+      width: settings[0].width,
+      height: settings[0].height,
+    });
+    setMazeState(randomisedDepthFirst(iterativeConstructor)(newState) as Graph);
+  }, [settings[0].width, settings[0].height]);
 
   const step = () => {
     setMazeState({ ...depthFirstR(iterativeConstructor)(mazeState) } as Graph);

@@ -5,6 +5,7 @@ import CssBaseline from "@mui/material/CssBaseline";
 import purple from "@mui/material/colors/purple";
 import styled from "styled-components";
 import { darken } from "@mui/material/styles";
+import Debug from "./Components/Debug/Debug";
 
 const AppContainer = styled("div")`
   background-color: ${darken(purple[900], 0.5)};
@@ -26,7 +27,12 @@ function App() {
     <AppContainer className="App">
       <ThemeProvider theme={darkTheme}>
         <CssBaseline />
-        <Maze config={{ height: 5, width: 5 }} />
+        <div
+          style={{ display: "flex", flexDirection: "column", height: "100%" }}
+        >
+          <Maze />
+          <Debug />
+        </div>
       </ThemeProvider>
     </AppContainer>
   );
