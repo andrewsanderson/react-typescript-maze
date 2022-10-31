@@ -7,19 +7,11 @@ interface CellProps {
 
 const Walls = styled("div")<{
   cell: Node;
-  status: string | undefined;
-  solutions: Array<number>;
 }>`
   width: 20px;
   height: 20px;
   box-shadow: ${(props) => {
     return wallGenerator(props.cell.neighbors);
-  }};
-  background-color: ${(props) => {
-    return bgGenerator(props.status);
-  }};
-  background-color: ${(props) => {
-    return props.solutions[0] !== undefined ? "green" : "rgba(255,255,255,0)";
   }};
 `;
 
@@ -48,9 +40,9 @@ const bgGenerator = (status: string | undefined) => {
 };
 
 const Cell = ({ cell }: CellProps) => {
-  const status = cell.maze.pathing.getStatus(cell.id);
-  const solutions = cell.maze.pathing.getSolutions(cell.id);
-  return <Walls cell={cell} status={status} solutions={solutions}></Walls>;
+  // const status = cell.maze.pathing.getStatus(cell.id);
+  // const solutions = cell.maze.pathing.getSolutions(cell.id);
+  return <Walls cell={cell}></Walls>;
 };
 
 export default Cell;

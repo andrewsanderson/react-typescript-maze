@@ -2,12 +2,10 @@ import { useEffect, useState } from "react";
 import styled from "styled-components";
 import Graph from "../Models/Graph";
 import Cell from "./Cell";
-import randomisedDepthFirst from "../Algorithms/Generators/randomisedDepthFirst";
-import depthFirstR from "../Algorithms/Solvers/depthFirst";
-import iterativeConstructor from "../Algorithms/Framework/iterative";
-import { Iterative, Recursive } from "../Algorithms/Framework";
 import Settings from "./Settings/Settings";
 import common from "@mui/material/colors/common";
+import { builder } from "../Algorithms";
+import defaultSolution from "../Algorithms/Framework/Conditionals/lastNodeFound";
 
 const Row = styled("div")`
   display: flex;
@@ -16,8 +14,6 @@ const Row = styled("div")`
 export type settings = {
   height: number;
   width: number;
-  solver: Recursive | Iterative;
-  generator: Recursive | Iterative;
 };
 
 const Wrapper = styled("div")`
@@ -43,31 +39,48 @@ const MazeBorder = styled("div")`
 `;
 
 const Maze = () => {
-  const settings = useState<settings>({
+  const settingsState = useState<settings>({
     width: 6,
     height: 6,
-    solver: randomisedDepthFirst(iterativeConstructor),
-    generator: randomisedDepthFirst(iterativeConstructor),
   });
-  const [mazeState, setMazeState] = useState<Graph>(
-    new Graph({
-      width: settings[0].width,
-      height: settings[0].height,
-    })
+
+  const maze = new Graph({
+    width: settingsState[0].width,
+    height: settingsState[0].height,
+  });
+
+  const randomisedDepthFirstSolver = builder(
+    "iterative",
+    "randomisedDepthFirst"
   );
+  randomisedDepthFirstSolver(maze);
+
+  const [mazeState, setMazeState] = useState<Graph>(maze);
+
+  const [settings] = settingsState;
+
+  const { width, height } = settings;
+
+  console.log(mazeState);
 
   useEffect(() => {
-    const newState = new Graph({
-      width: settings[0].width,
-      height: settings[0].height,
+    const maze = new Graph({
+      width: width,
+      height: height,
     });
-    setMazeState(randomisedDepthFirst(iterativeConstructor)(newState) as Graph);
-  }, [settings[0].width, settings[0].height]);
 
-  const step = () => {
-    setMazeState({ ...depthFirstR(iterativeConstructor)(mazeState) } as Graph);
-  };
+    const randomisedDepthFirstGenerator = builder(
+      "iterative",
+      "randomisedDepthFirst"
+    );
 
+    randomisedDepthFirstGenerator(maze);
+
+    setMazeState(maze);
+  }, [width, height]);
+
+  const depthFirstSolver = builder("iterative", "depthFirst", defaultSolution);
+  console.log(depthFirstSolver(maze));
   return (
     <Wrapper>
       <MazeContainer>
@@ -87,7 +100,7 @@ const Maze = () => {
           })}
         </MazeBorder>
       </MazeContainer>
-      <Settings settingsState={settings} />
+      <Settings settingsState={settingsState} />
     </Wrapper>
   );
 };

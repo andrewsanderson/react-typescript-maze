@@ -1,14 +1,10 @@
-import Pathing from "../../Models/Pathing";
 import Node from "../../Models/Cell";
-import Graph from "../../Models/Graph";
-import { algorithmConstructor } from "../Framework";
-import defaultSolution from "./defaultSolution";
+import { GetChildNodes, InsertChildNodes } from "..";
 
-const childAcquisition = (maze: Graph) => {
-  const { pathing } = maze;
-  const { queued, current, exhausted } = pathing;
+const getChildNodes: GetChildNodes = (plot) => {
+  const { queued, current, exhausted } = plot;
 
-  const currentNode = pathing.getCurrentNode();
+  const currentNode = plot.currentNode;
 
   // acquire children as array that are not null
   const possibleChildren: Array<Node> = Object.values(
@@ -25,12 +21,10 @@ const childAcquisition = (maze: Graph) => {
   });
   return useableChildren;
 };
-const pathMutation = (path: Pathing, children: Array<Node>) => {
+const insertChildNodes: InsertChildNodes = (path, children) => {
   path.queued.push(children[0]);
 };
 
-const depthFirst = (constructor: algorithmConstructor) => {
-  return constructor(childAcquisition, pathMutation, defaultSolution);
-};
+const depthFirst = { getChildNodes, insertChildNodes };
 
 export default depthFirst;

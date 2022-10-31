@@ -1,19 +1,34 @@
-import Pathing from "../../Models/Pathing";
-import Map from "../../Models/Graph";
+import { GetChildNodes } from "..";
 import Cell, { Neighbors } from "../../Models/Cell";
-import { shuffle } from "../../utils";
-import { algorithmConstructor } from "../Framework";
+import Plot from "../../Models/Plot";
 
-const childAcquisition = (maze: Map) => {
-  const { pathing } = maze;
-  const { queued, current, exhausted } = pathing;
+const shuffle = (array: Array<any>) => {
+  let currentIndex = array.length,
+    randomIndex;
 
-  const currentNode = pathing.getCurrentNode();
+  // While there remain elements to shuffle.
+  while (currentIndex !== 0) {
+    // Pick a remaining element.
+    randomIndex = Math.floor(Math.random() * currentIndex);
+    currentIndex--;
+
+    // And swap it with the current element.
+    [array[currentIndex], array[randomIndex]] = [
+      array[randomIndex],
+      array[currentIndex],
+    ];
+  }
+
+  return array;
+};
+
+const getChildNodes: GetChildNodes = (plot: Plot) => {
+  const { queued, current, exhausted, currentNode } = plot;
 
   // acquire children as array that are not null
   const possibleChildren: Array<Cell> = Object.keys(currentNode.neighbors)
     .map((direction) => {
-      return currentNode.findNeighbor(maze, direction as keyof Neighbors);
+      return plot.maze.findNeighbor(currentNode, direction as keyof Neighbors);
     })
     .filter((node): node is Cell => !!node);
 
@@ -29,14 +44,12 @@ const childAcquisition = (maze: Map) => {
   return shuffledChildren;
 };
 
-const pathMutation = (path: Pathing, children: Array<Cell>) => {
-  const currentNode = path.current.at(-1)!;
+const insertChildNodes = (path: Plot, children: Array<Cell>) => {
+  const currentNode = path.currentNode;
   currentNode.addNeighbour(children[0]);
   path.queued.push(children[0]);
 };
 
-const randomisedDepthFirst = (constructor: algorithmConstructor) => {
-  return constructor(childAcquisition, pathMutation);
-};
+const randomisedDepthFirst = { getChildNodes, insertChildNodes };
 
 export default randomisedDepthFirst;

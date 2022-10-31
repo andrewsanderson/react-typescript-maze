@@ -1,6 +1,3 @@
-import Graph from "./Graph";
-import Map from "./Graph";
-
 export interface Coordinates {
   x: number;
   y: number;
@@ -22,10 +19,8 @@ class Cell {
     down: null,
     left: null,
   };
-  maze: Graph;
 
-  constructor(maze: Graph, id: number, coordinates: Coordinates) {
-    this.maze = maze;
+  constructor(id: number, coordinates: Coordinates) {
     this.id = id;
     this.coordinates = coordinates;
   }
@@ -33,8 +28,7 @@ class Cell {
   /**
    *
    * @param direction the initial direction.
-   *
-   * @returns the inverse of the provided 'direction' parameter as a string.
+   * @returns the inverse of the provided 'direction' parameter, as a string.
    */
   inverseDirection(direction: keyof Neighbors): keyof Neighbors {
     switch (direction) {
@@ -47,36 +41,6 @@ class Cell {
       case "left":
         return "right";
     }
-  }
-
-  /**
-   *
-   * @param cell the cell to compare this one to.
-   * @returns true if they share x and y coordinates, otherwise it returns false.
-   */
-  compareToCell(cell: Cell): boolean {
-    return (
-      cell.coordinates.x === this.coordinates.x &&
-      cell.coordinates.y === this.coordinates.y
-    );
-  }
-
-  /**
-   *
-   * @param maze the maze the cell exists within
-   * @param direction the direction from the current cell of the neighbor we're searching for.
-   * @returns the neighboring cell if the cell has one ni that direction, otherwise it returns null.
-   */
-  findNeighbor(maze: Map, direction: keyof Neighbors) {
-    const neighborCoordinates = this.generateNeighborCoordinates(direction);
-    return (
-      maze.cells.find((Cell) => {
-        return (
-          JSON.stringify(neighborCoordinates) ===
-          JSON.stringify(Cell.coordinates)
-        );
-      }) || null
-    );
   }
 
   /**

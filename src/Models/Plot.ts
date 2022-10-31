@@ -1,32 +1,32 @@
-import Map from "./Graph";
-import Node from "./Cell";
+import Cell from "./Cell";
+import Graph from "./Graph";
 
-type GetChildNodes = (path: Pathing) => Array<Node>;
+type GetChildNodes = (path: Plot) => Array<Cell>;
 
-type InsertChildNodes = (path: Pathing, children: Array<Node>) => void;
+type InsertChildNodes = (path: Plot, children: Array<Cell>) => void;
 
 export type SolutionFinder = {
   getChildNodes: GetChildNodes;
   insertChildNodes: InsertChildNodes;
 };
 
-class Pathing {
-  maze: Map;
-  queued: Array<Node> = [];
-  current: Array<Node> = [];
-  exhausted: Array<Node> = [];
+class Plot {
+  queued: Array<Cell> = [];
+  current: Array<Cell> = [];
+  exhausted: Array<Cell> = [];
   errors: Array<"string"> = [];
-  solutions: Array<Array<Node>> = [];
-  constructor(maze: Map, startingNode: Node) {
+  solutions: Array<Array<Cell>> = [];
+  maze: Graph;
+  constructor(maze: Graph) {
     this.maze = maze;
-    this.queued = [startingNode];
+    this.queued = [maze.cells[0]];
   }
 
-  getCurrentNode() {
+  get currentNode() {
     return this.current.at(-1)!;
   }
 
-  getCurrentPath() {
+  get currentPath() {
     return [...this.current];
   }
 
@@ -42,6 +42,10 @@ class Pathing {
     return solutionsIncludingNode;
   }
 
+  allNodesExplored() {
+    return this.exhausted.length === this.maze.cells.length - 1;
+  }
+
   // returns the status of the node by it's id.
   getStatus(id: number) {
     for (const queue of [this.queued, this.current, this.exhausted]) {
@@ -51,7 +55,7 @@ class Pathing {
         })
       ) {
         return Object.keys(this).find((key) => {
-          const keys: keyof Pathing = key as keyof Pathing;
+          const keys: keyof Plot = key as keyof Plot;
           return this[keys] === queue;
         });
       }
@@ -59,4 +63,4 @@ class Pathing {
   }
 }
 
-export default Pathing;
+export default Plot;

@@ -1,5 +1,4 @@
-import Cell from "./Cell";
-import Pathing from "./Pathing";
+import Cell, { Neighbors } from "./Cell";
 
 export type WinConditions = (cell: Cell) => boolean;
 
@@ -12,21 +11,33 @@ class Graph {
   width = 0;
   height = 0;
   cells: Array<Cell> = [];
-  pathing: Pathing;
 
   constructor(config: Config) {
     this.width = config.width;
     this.height = config.height;
     this.initialise();
-    this.pathing = new Pathing(this, this.cells[0]);
   }
 
   getRandomCell() {
     return this.cells[Math.floor(Math.random() * this.cells.length)];
   }
 
-  resetPath() {
-    this.pathing = new Pathing(this, this.cells[0]);
+  /**
+   *
+   * @param maze the maze the cell exists within
+   * @param direction the direction from the current cell of the neighbor we're searching for.
+   * @returns the neighboring cell if the cell has one ni that direction, otherwise it returns null.
+   */
+  findNeighbor(cell: Cell, direction: keyof Neighbors) {
+    const neighborCoordinates = cell.generateNeighborCoordinates(direction);
+    return (
+      this.cells.find((cell) => {
+        return (
+          JSON.stringify(neighborCoordinates) ===
+          JSON.stringify(cell.coordinates)
+        );
+      }) || null
+    );
   }
 
   /**
@@ -37,7 +48,6 @@ class Graph {
     for (const y of [...Array(this.height).keys()]) {
       for (const x of [...Array(this.width).keys()]) {
         const cell = new Cell(
-          this,
           id++, // unique Cell id
           { x, y } //coordinates
           // No neighbours to start with

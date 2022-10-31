@@ -1,8 +1,6 @@
 import { BaseSyntheticEvent } from "react";
 import styled from "styled-components";
-
 import { settings } from "../Maze";
-import { options } from "./options";
 import {
   Button,
   Slider,
@@ -100,7 +98,7 @@ const Settings = ({ settingsState }: SettingsProps) => {
 
         <FormControl fullWidth style={{ margin: "5px" }}>
           <InputLabel id="demo-simple-select-label">Repetition</InputLabel>
-          <Select
+          {/* <Select
             labelId="demo-simple-select-label"
             id="demo-simple-select"
             label="Generation Algorithm"
@@ -109,7 +107,7 @@ const Settings = ({ settingsState }: SettingsProps) => {
             {options.algorithmTypes.map((algorithmType) => {
               return <MenuItem value={10}>{algorithmType.title}</MenuItem>;
             })}
-          </Select>
+          </Select> */}
         </FormControl>
       </FormSection>
       <FormSection>
@@ -117,7 +115,7 @@ const Settings = ({ settingsState }: SettingsProps) => {
 
         <FormControl fullWidth style={{ margin: "5px" }}>
           <InputLabel id="demo-simple-select-label">Repetition</InputLabel>
-          <Select
+          {/* <Select
             labelId="demo-simple-select-label"
             id="demo-simple-select"
             label="Generation Algorithm"
@@ -126,7 +124,7 @@ const Settings = ({ settingsState }: SettingsProps) => {
             {options.algorithmTypes.map((algorithmType) => {
               return <MenuItem value={10}>{algorithmType.title}</MenuItem>;
             })}
-          </Select>
+          </Select> */}
         </FormControl>
       </FormSection>
       <FormSection>
