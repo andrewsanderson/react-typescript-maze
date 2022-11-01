@@ -20,10 +20,12 @@ const iterativeConstructor = (
   const iterative = (maze: Graph): Plot => {
     const plot = new Plot(maze);
     while (!plot.allNodesExplored()) {
-      step(plot, getChildNodes, insertChildNodes);
+      const { queued, current } = plot;
+      current.push(queued.shift()!);
       if (!!solutionFinder && solutionFinder(plot)) {
         plot.solutions.push(plot.currentPath);
       }
+      step(plot, getChildNodes, insertChildNodes);
     }
     return plot;
   };

@@ -21,7 +21,7 @@ const Walls = styled("div")<{
 `;
 
 const bgGenerator = (position: number | undefined) => {
-  return position !== undefined && position > -1 ? "green" : "blue";
+  return position !== undefined && position > -1 ? "green" : "#00000000";
 };
 
 const wallGenerator = (neighbors: Neighbors) => {

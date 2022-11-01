@@ -31,8 +31,8 @@ const FormSection = styled("div")``;
 interface SettingsProps {
   settingsState: [settings, React.Dispatch<React.SetStateAction<settings>>];
   solutionState: [
-    Plot | undefined,
-    React.Dispatch<React.SetStateAction<Plot | undefined>>
+    Plot | null,
+    React.Dispatch<React.SetStateAction<Plot | null>>
   ];
   maze: Graph;
 }
