@@ -5,7 +5,7 @@ import Plot from "../../Models/Plot";
 import { GetChildNodes, InsertChildNodes } from "..";
 import allNodesExplored from "./Conditionals/allNodesExhausted";
 
-export type Recursive = (maze: Graph, _plot?: Plot) => Plot | Recursive;
+export type Recursive = (maze: Graph, _plot?: Plot) => Plot;
 
 const recursiveConstructor = (
   getChildNodes: GetChildNodes,

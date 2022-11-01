@@ -28,17 +28,6 @@ const wallGenerator = (neighbors: Neighbors) => {
   return wallWidthString.join(", ");
 };
 
-const bgGenerator = (status: string | undefined) => {
-  switch (status) {
-    case "current":
-      return "red";
-    case "exhausted":
-      return "lightgray";
-    case "queued":
-      return "blue";
-  }
-};
-
 const Cell = ({ cell }: CellProps) => {
   // const status = cell.maze.pathing.getStatus(cell.id);
   // const solutions = cell.maze.pathing.getSolutions(cell.id);

@@ -1,11 +1,7 @@
 import Cell from "../Models/Cell";
 import Plot from "../Models/Plot";
-import iterativeConstructor, {
-  Iterative,
-} from "./Framework/IterativeConstructor";
-import recursiveConstructor, {
-  Recursive,
-} from "./Framework/RecursiveConstructor";
+import iterative, { Iterative } from "./Framework/IterativeConstructor";
+import recursive, { Recursive } from "./Framework/RecursiveConstructor";
 import randomisedDepthFirst from "./Generators/randomisedDepthFirst";
 import depthFirst from "./Solvers/depthFirst";
 
@@ -17,24 +13,23 @@ export type AlgorithmConstructor = (
   solutionFinder?: ((plot: Plot) => boolean) | undefined
 ) => Recursive | Iterative;
 
-const constructors = {
-  iterative: iterativeConstructor,
-  recursive: recursiveConstructor,
+export const constructors = {
+  iterative,
+  recursive,
 };
 
-type solvers = "randomisedDepthFirst";
-const solver = { randomisedDepthFirst };
+export const generators = { randomisedDepthFirst };
 
-type generators = "depthFirst";
-const generator = { depthFirst };
+export const solvers = { depthFirst };
 
-const algorithms = { ...solver, ...generator };
+export type algorithmType = keyof typeof algorithms;
+export const algorithms = { ...solvers, ...generators };
 
-export const builder = (
-  type: "iterative" | "recursive",
-  algorithm: solvers | generators,
+export const algorithmBuilder = (
+  type: keyof typeof constructors,
+  algorithm: algorithmType,
   solution?: (plot: Plot) => boolean
-) => {
+): Recursive | Iterative => {
   const { insertChildNodes, getChildNodes } = algorithms[algorithm];
   return constructors[type](getChildNodes, insertChildNodes, solution);
 };

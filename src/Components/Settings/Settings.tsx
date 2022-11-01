@@ -1,4 +1,3 @@
-import { BaseSyntheticEvent } from "react";
 import styled from "styled-components";
 import { settings } from "../Maze";
 import {
@@ -9,10 +8,16 @@ import {
   Select,
   InputLabel,
   MenuItem,
-  FormGroup,
+  Switch,
   FormControlLabel,
-  Checkbox,
+  FormGroup,
 } from "@mui/material";
+import { solvers, generators, algorithmBuilder } from "../../Algorithms";
+import defaultSolution from "../../Algorithms/Framework/Conditionals/lastNodeFound";
+import Plot from "../../Models/Plot";
+import { Recursive } from "../../Algorithms/Framework/RecursiveConstructor";
+import { Iterative } from "../../Algorithms/Framework/IterativeConstructor";
+import Graph from "../../Models/Graph";
 
 const Container = styled("div")`
   padding: 40px 20px;
@@ -25,25 +30,20 @@ const FormSection = styled("div")``;
 
 interface SettingsProps {
   settingsState: [settings, React.Dispatch<React.SetStateAction<settings>>];
+  plotState: [
+    Plot | undefined,
+    React.Dispatch<React.SetStateAction<Plot | undefined>>
+  ];
+  maze: Graph;
 }
 
-const Settings = ({ settingsState }: SettingsProps) => {
-  const [settings, setSettings] = settingsState;
-
-  // height & width = counter
-  // solver iterative/recursive = dropdwon
-  // generator iterative/recursive = dropdown
-
-  const handleSolverChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    console.log(e);
-  };
-
-  const handleDimensionChange = (
-    e: Event,
-    newValue: number | number[],
-    name: string
-  ) => {
-    setSettings({ ...settings, [name]: newValue });
+const Settings = ({
+  settingsState: [settings, setSettings],
+  plotState: [plot, setPlot],
+  maze,
+}: SettingsProps) => {
+  const changeController = (event: any, key: string, newValue: any) => {
+    setSettings({ ...settings, [key]: newValue });
   };
 
   return (
@@ -52,7 +52,9 @@ const Settings = ({ settingsState }: SettingsProps) => {
         <Typography id="maze-settings-header" variant="h4">
           Maze Settings
         </Typography>
+
         <div style={{ padding: "10px", display: "flex", width: "500px" }}>
+          {/* Width */}
           <Typography
             id="input-slider"
             gutterBottom
@@ -64,7 +66,7 @@ const Settings = ({ settingsState }: SettingsProps) => {
             aria-label="Volume"
             value={settings.width}
             onChange={(e, v) => {
-              handleDimensionChange(e, v, "width");
+              changeController(e, "width", v);
             }}
             name="width"
             step={1}
@@ -72,6 +74,7 @@ const Settings = ({ settingsState }: SettingsProps) => {
             max={20}
             valueLabelDisplay="auto"
           />
+          {/* Height */}
           <Typography
             id="input-slider"
             gutterBottom
@@ -83,7 +86,7 @@ const Settings = ({ settingsState }: SettingsProps) => {
             aria-label="Volume"
             value={settings.height}
             onChange={(e, v) => {
-              handleDimensionChange(e, v, "height");
+              changeController(e, "height", v);
             }}
             name="height"
             step={1}
@@ -95,46 +98,70 @@ const Settings = ({ settingsState }: SettingsProps) => {
       </FormSection>
       <FormSection>
         <InputLabel>Generator</InputLabel>
-
         <FormControl fullWidth style={{ margin: "5px" }}>
+          <FormGroup aria-label="position" row>
+            <FormControlLabel
+              value={settings.generator.type}
+              control={<Switch defaultChecked color="default" />}
+              label={settings.generator.type}
+              labelPlacement="top"
+            />
+          </FormGroup>
           <InputLabel id="demo-simple-select-label">Repetition</InputLabel>
-          {/* <Select
+          <Select
             labelId="demo-simple-select-label"
             id="demo-simple-select"
             label="Generation Algorithm"
             variant="standard"
+            onChange={(e) => {
+              changeController(e, "generator", e.target.value);
+            }}
+            value={settings.generator}
           >
-            {options.algorithmTypes.map((algorithmType) => {
-              return <MenuItem value={10}>{algorithmType.title}</MenuItem>;
+            {Object.keys(generators).map((algorithmType) => {
+              console.log(algorithmType);
+              return <MenuItem value={algorithmType}>{algorithmType}</MenuItem>;
             })}
-          </Select> */}
+          </Select>
         </FormControl>
       </FormSection>
       <FormSection>
         <InputLabel>Solver</InputLabel>
-
         <FormControl fullWidth style={{ margin: "5px" }}>
+          <FormGroup aria-label="position" row>
+            <FormControlLabel
+              value={settings.solver.type}
+              control={<Switch defaultChecked color="default" />}
+              label="Top"
+              labelPlacement="top"
+            />
+          </FormGroup>
           <InputLabel id="demo-simple-select-label">Repetition</InputLabel>
-          {/* <Select
+          <Select
             labelId="demo-simple-select-label"
             id="demo-simple-select"
             label="Generation Algorithm"
             variant="standard"
+            value={settings.solver.method}
+            onChange={(e) => {
+              changeController(e, "solver", {
+                type: "iterative",
+                method: e.target.value,
+              });
+            }}
           >
-            {options.algorithmTypes.map((algorithmType) => {
-              return <MenuItem value={10}>{algorithmType.title}</MenuItem>;
+            {Object.keys(solvers).map((algorithmType) => {
+              return <MenuItem value={algorithmType}>{algorithmType}</MenuItem>;
             })}
-          </Select> */}
+          </Select>
         </FormControl>
       </FormSection>
+      {/* Buttons */}
       <FormSection>
         <div
           style={{ padding: "10px", display: "flex", justifyContent: "center" }}
         >
           <Button variant="outlined" sx={{ marginRight: "5px" }}>
-            Step
-          </Button>
-          <Button variant="outlined" sx={{ marginLeft: "5px" }}>
             Solve
           </Button>
         </div>
