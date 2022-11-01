@@ -70,7 +70,7 @@ const Maze = () => {
     height: settingsState[0].height,
   });
 
-  const plot = useState<Plot>();
+  const solution = useState<Plot>();
 
   const [mazeState, setMazeState] = useState<Graph>(maze);
 
@@ -108,7 +108,10 @@ const Maze = () => {
                     return cell.coordinates.y === yVal;
                   })
                   .map((cell) => {
-                    return <Cell key={cell.id} cell={cell} />;
+                    const pathPosition = solution[0]?.getPosition(cell.id);
+                    return (
+                      <Cell key={cell.id} cell={cell} position={pathPosition} />
+                    );
                   })}
               </Row>
             );
@@ -117,7 +120,7 @@ const Maze = () => {
       </MazeContainer>
       <Settings
         settingsState={settingsState}
-        plotState={plot}
+        solutionState={solution}
         maze={mazeState}
       />
     </Wrapper>

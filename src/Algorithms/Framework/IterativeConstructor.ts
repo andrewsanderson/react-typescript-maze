@@ -24,7 +24,6 @@ const iterativeConstructor = (
       if (!!solutionFinder && solutionFinder(plot)) {
         plot.solutions.push(plot.currentPath);
       }
-      console.log(plot.solutions);
     }
     return plot;
   };

@@ -46,6 +46,13 @@ class Plot {
     return this.exhausted.length === this.maze.cells.length - 1;
   }
 
+  getPosition(id: number) {
+    const position = this.solutions[0].findIndex((element) => {
+      return element.id === id;
+    });
+    return position;
+  }
+
   // returns the status of the node by it's id.
   getStatus(id: number) {
     for (const queue of [this.queued, this.current, this.exhausted]) {

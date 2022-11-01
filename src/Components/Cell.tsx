@@ -3,17 +3,26 @@ import Node, { Neighbors } from "../Models/Cell";
 
 interface CellProps {
   cell: Node;
+  position: number | undefined;
 }
 
 const Walls = styled("div")<{
   cell: Node;
+  position: number | undefined;
 }>`
   width: 20px;
   height: 20px;
   box-shadow: ${(props) => {
     return wallGenerator(props.cell.neighbors);
   }};
+  background-color: ${(props) => {
+    return bgGenerator(props.position);
+  }};
 `;
+
+const bgGenerator = (position: number | undefined) => {
+  return position !== undefined && position > -1 ? "green" : "blue";
+};
 
 const wallGenerator = (neighbors: Neighbors) => {
   const walls = [
@@ -28,10 +37,10 @@ const wallGenerator = (neighbors: Neighbors) => {
   return wallWidthString.join(", ");
 };
 
-const Cell = ({ cell }: CellProps) => {
+const Cell = ({ cell, position }: CellProps) => {
   // const status = cell.maze.pathing.getStatus(cell.id);
   // const solutions = cell.maze.pathing.getSolutions(cell.id);
-  return <Walls cell={cell}></Walls>;
+  return <Walls cell={cell} position={position}></Walls>;
 };
 
 export default Cell;

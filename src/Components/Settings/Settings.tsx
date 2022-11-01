@@ -30,7 +30,7 @@ const FormSection = styled("div")``;
 
 interface SettingsProps {
   settingsState: [settings, React.Dispatch<React.SetStateAction<settings>>];
-  plotState: [
+  solutionState: [
     Plot | undefined,
     React.Dispatch<React.SetStateAction<Plot | undefined>>
   ];
@@ -39,11 +39,21 @@ interface SettingsProps {
 
 const Settings = ({
   settingsState: [settings, setSettings],
-  plotState: [plot, setPlot],
+  solutionState: [solution, setSolution],
   maze,
 }: SettingsProps) => {
   const changeController = (event: any, key: string, newValue: any) => {
     setSettings({ ...settings, [key]: newValue });
+  };
+
+  const solveClick = () => {
+    const algorithm = algorithmBuilder(
+      settings.solver.type,
+      settings.solver.method,
+      defaultSolution
+    );
+    const solve = algorithm(maze);
+    setSolution(solve);
   };
 
   return (
@@ -99,15 +109,6 @@ const Settings = ({
       <FormSection>
         <InputLabel>Generator</InputLabel>
         <FormControl fullWidth style={{ margin: "5px" }}>
-          <FormGroup aria-label="position" row>
-            <FormControlLabel
-              value={settings.generator.type}
-              control={<Switch defaultChecked color="default" />}
-              label={settings.generator.type}
-              labelPlacement="top"
-            />
-          </FormGroup>
-          <InputLabel id="demo-simple-select-label">Repetition</InputLabel>
           <Select
             labelId="demo-simple-select-label"
             id="demo-simple-select"
@@ -116,7 +117,7 @@ const Settings = ({
             onChange={(e) => {
               changeController(e, "generator", e.target.value);
             }}
-            value={settings.generator}
+            value={settings.generator.method}
           >
             {Object.keys(generators).map((algorithmType) => {
               console.log(algorithmType);
@@ -124,19 +125,33 @@ const Settings = ({
             })}
           </Select>
         </FormControl>
+        <FormGroup
+          aria-label="position"
+          row
+          style={{ justifyContent: "flex-end" }}
+        >
+          <FormControlLabel
+            value={settings.generator.type}
+            control={
+              <Switch
+                defaultChecked
+                color="default"
+                onChange={(e) => {
+                  changeController(e, "generator", {
+                    type: e.target.checked ? "iterative" : "recursive",
+                    method: settings.generator.method,
+                  });
+                }}
+              />
+            }
+            label={settings.generator.type}
+            labelPlacement="start"
+          />
+        </FormGroup>
       </FormSection>
       <FormSection>
         <InputLabel>Solver</InputLabel>
         <FormControl fullWidth style={{ margin: "5px" }}>
-          <FormGroup aria-label="position" row>
-            <FormControlLabel
-              value={settings.solver.type}
-              control={<Switch defaultChecked color="default" />}
-              label="Top"
-              labelPlacement="top"
-            />
-          </FormGroup>
-          <InputLabel id="demo-simple-select-label">Repetition</InputLabel>
           <Select
             labelId="demo-simple-select-label"
             id="demo-simple-select"
@@ -155,13 +170,40 @@ const Settings = ({
             })}
           </Select>
         </FormControl>
+        <FormGroup
+          aria-label="position"
+          row
+          style={{ justifyContent: "flex-end" }}
+        >
+          <FormControlLabel
+            value={settings.solver.type}
+            control={
+              <Switch
+                defaultChecked
+                color="default"
+                onChange={(e) => {
+                  changeController(e, "solver", {
+                    type: e.target.checked ? "iterative" : "recursive",
+                    method: settings.solver.method,
+                  });
+                }}
+              />
+            }
+            label={settings.solver.type}
+            labelPlacement="start"
+          />
+        </FormGroup>
       </FormSection>
       {/* Buttons */}
       <FormSection>
         <div
           style={{ padding: "10px", display: "flex", justifyContent: "center" }}
         >
-          <Button variant="outlined" sx={{ marginRight: "5px" }}>
+          <Button
+            variant="outlined"
+            sx={{ marginRight: "5px" }}
+            onClick={solveClick}
+          >
             Solve
           </Button>
         </div>
