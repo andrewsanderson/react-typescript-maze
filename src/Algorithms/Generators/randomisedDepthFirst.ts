@@ -1,55 +1,50 @@
-import { GetChildNodes } from "..";
-import Cell, { Neighbors } from "../../Models/Cell";
-import Plot from "../../Models/Plot";
+import { shuffle } from ".";
+import Cell, { Neighbors } from "../../Models/Maze/Cell";
+import Maze from "../../Models/Maze/Graph";
+import Tree, { GetChildren, InsertChildren } from "../../Models/Pathing/Tree";
 
-const shuffle = (array: Array<any>) => {
-  let currentIndex = array.length,
-    randomIndex;
+const randomIntFromInterval = (min: number, max: number) => {
+  // min and max included
+  return Math.floor(Math.random() * (max - min + 1) + min);
+};
 
-  // While there remain elements to shuffle.
-  while (currentIndex !== 0) {
-    // Pick a remaining element.
-    randomIndex = Math.floor(Math.random() * currentIndex);
-    currentIndex--;
+// Get children by peeking over walls.
+const randomisedDepthFirst = (maze: Maze) => {
+  const getChildren: GetChildren<Cell> = (currentNode) => {
+    const children = Object.keys(currentNode.value.neighbors)
+      .map((direction) => {
+        return maze.peekNeighbor(
+          currentNode.value,
+          direction as keyof Neighbors
+        );
+      })
+      .filter((child) => {
+        return child !== null;
+      }) as Array<Cell>;
+    return children;
+  };
 
-    // And swap it with the current element.
-    [array[currentIndex], array[randomIndex]] = [
-      array[randomIndex],
-      array[currentIndex],
-    ];
+  // Insert these nodes one at a time.
+  const insertChildren: InsertChildren<Cell> = (queue, children) => {
+    shuffle(children);
+    const firstNode = children[0];
+    !!firstNode.parent && firstNode.value.addNeighbour(firstNode.parent.value);
+    queue.queue(firstNode);
+  };
+
+  // Creaete a tree from the above settings.
+  const tree = new Tree(
+    maze.cells[randomIntFromInterval(0, maze.height * maze.width - 1)],
+    getChildren,
+    insertChildren
+  );
+
+  // iterate over the nodes and return void as we don't want to do anything with them.
+  for (const item of tree) {
+    void item;
   }
 
-  return array;
+  return maze;
 };
-
-const getChildNodes: GetChildNodes = (plot: Plot) => {
-  const { queued, current, exhausted, currentNode } = plot;
-
-  // acquire children as array that are not null
-  const possibleChildren: Array<Cell> = Object.keys(currentNode.neighbors)
-    .map((direction) => {
-      return plot.maze.findNeighbor(currentNode, direction as keyof Neighbors);
-    })
-    .filter((node): node is Cell => !!node);
-
-  // filter children out that are already queued, in the current branch, already exhausted
-  const useableChildren = possibleChildren.filter((child) => {
-    return !(
-      queued.includes(child) ||
-      current.includes(child) ||
-      exhausted.includes(child)
-    );
-  });
-  const shuffledChildren = shuffle(useableChildren);
-  return shuffledChildren;
-};
-
-const insertChildNodes = (path: Plot, children: Array<Cell>) => {
-  const currentNode = path.currentNode;
-  currentNode.addNeighbour(children[0]);
-  path.queued.push(children[0]);
-};
-
-const randomisedDepthFirst = { getChildNodes, insertChildNodes };
 
 export default randomisedDepthFirst;

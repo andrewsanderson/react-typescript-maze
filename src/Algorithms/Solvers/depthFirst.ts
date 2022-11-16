@@ -1,30 +1,33 @@
-import Node from "../../Models/Cell";
-import { GetChildNodes, InsertChildNodes } from "..";
+import Cell, { Neighbors } from "../../Models/Maze/Cell";
+import Maze from "../../Models/Maze/Graph";
+import Tree, { GetChildren, InsertChildren } from "../../Models/Pathing/Tree";
+import Node from "../../Models/Pathing/Node";
 
-const getChildNodes: GetChildNodes = (plot) => {
-  const { queued, current, exhausted } = plot;
+const depthFirst = (maze: Maze) => {
+  const getChildren: GetChildren<Cell> = (currentNode) => {
+    const children = Object.values(currentNode.value.neighbors).filter(
+      (neighbor) => {
+        return neighbor !== null;
+      }
+    ) as Array<Cell>;
 
-  const currentNode = plot.currentNode;
+    return children;
+  };
 
-  // acquire children as array that are not null
-  const possibleChildren: Array<Node> = Object.values(
-    currentNode.neighbors
-  ).filter((node): node is Node => !!node);
+  const insertChildren: InsertChildren<Cell> = (queue, children) => {
+    queue.queue(children[0]);
+  };
 
-  // filter children out that are already queued, in the current branch, already exhausted
-  const useableChildren = possibleChildren.filter((child) => {
-    return !(
-      queued.includes(child) ||
-      current.includes(child) ||
-      exhausted.includes(child)
-    );
-  });
-  return useableChildren;
+  const solver = (node: Node<Cell>) => {
+    return node.value.id === maze.width * maze.height - 1;
+  };
+
+  const tree = new Tree(maze.cells[0], getChildren, insertChildren, solver);
+
+  for (const items of tree) {
+  }
+
+  return tree.solution;
 };
-const insertChildNodes: InsertChildNodes = (path, children) => {
-  path.queued.push(children[0]);
-};
-
-const depthFirst = { getChildNodes, insertChildNodes };
 
 export default depthFirst;

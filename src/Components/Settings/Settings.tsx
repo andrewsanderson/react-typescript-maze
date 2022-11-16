@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { settings } from "../Maze";
+import { settings } from "../MazeComponent";
 import {
   Button,
   Slider,
@@ -12,12 +12,11 @@ import {
   FormControlLabel,
   FormGroup,
 } from "@mui/material";
-import { solvers, generators, algorithmBuilder } from "../../Algorithms";
-import defaultSolution from "../../Algorithms/Framework/Conditionals/lastNodeFound";
-import Plot from "../../Models/Plot";
-import { Recursive } from "../../Algorithms/Framework/RecursiveConstructor";
-import { Iterative } from "../../Algorithms/Framework/IterativeConstructor";
-import Graph from "../../Models/Graph";
+import Graph from "../../Models/Maze/Graph";
+import Node from "../../Models/Pathing/Node";
+import Cell from "../../Models/Maze/Cell";
+import generators from "../../Algorithms/Generators";
+import solvers from "../../Algorithms/Solvers";
 
 const Container = styled("div")`
   padding: 40px 20px;
@@ -26,34 +25,37 @@ const Container = styled("div")`
   flex-direction: column;
 `;
 
+const DropDownWrapper = styled("div")`
+  padding: 20px;
+`;
+
 const FormSection = styled("div")``;
 
 interface SettingsProps {
-  settingsState: [settings, React.Dispatch<React.SetStateAction<settings>>];
-  solutionState: [
-    Plot | null,
-    React.Dispatch<React.SetStateAction<Plot | null>>
-  ];
-  maze: Graph;
+  settingsState: settings;
+  setSettingsState: React.Dispatch<React.SetStateAction<settings>>;
+  solve: () => void;
 }
 
 const Settings = ({
-  settingsState: [settings, setSettings],
-  solutionState: [solution, setSolution],
-  maze,
+  settingsState,
+  setSettingsState,
+  solve,
 }: SettingsProps) => {
-  const changeController = (event: any, key: string, newValue: any) => {
-    setSettings({ ...settings, [key]: newValue });
+  const { height, width, solver, generator } = settingsState;
+
+  const handleDimensionChange = (e: Event) => {
+    const { value, name } = e.target as HTMLInputElement;
+    setSettingsState({ ...settingsState, [name]: value });
   };
 
-  const solveClick = () => {
-    const algorithm = algorithmBuilder(
-      settings.solver.type,
-      settings.solver.method,
-      defaultSolution
-    );
-    const solve = algorithm(maze);
-    setSolution(solve);
+  const handleAlgorithmChange = (e: any) => {
+    const { value, name } = e.target as HTMLInputElement;
+    setSettingsState({ ...settingsState, [name]: value });
+  };
+
+  const handleSolveClick = () => {
+    solve();
   };
 
   return (
@@ -74,15 +76,13 @@ const Settings = ({
           </Typography>
           <Slider
             aria-label="Volume"
-            value={settings.width}
-            onChange={(e, v) => {
-              changeController(e, "width", v);
-            }}
+            value={width}
             name="width"
             step={1}
             min={2}
             max={20}
             valueLabelDisplay="auto"
+            onChange={handleDimensionChange}
           />
           {/* Height */}
           <Typography
@@ -94,106 +94,59 @@ const Settings = ({
           </Typography>
           <Slider
             aria-label="Volume"
-            value={settings.height}
-            onChange={(e, v) => {
-              changeController(e, "height", v);
-            }}
+            value={height}
             name="height"
             step={1}
             min={2}
             max={20}
             valueLabelDisplay="auto"
+            onChange={handleDimensionChange}
           />
         </div>
       </FormSection>
-      <FormSection>
-        <InputLabel>Generator</InputLabel>
-        <FormControl fullWidth style={{ margin: "5px" }}>
+      <DropDownWrapper>
+        <FormControl fullWidth>
+          <InputLabel id="demo-simple-select-label">Generator</InputLabel>
           <Select
             labelId="demo-simple-select-label"
             id="demo-simple-select"
-            label="Generation Algorithm"
-            variant="standard"
-            onChange={(e) => {
-              changeController(e, "generator", e.target.value);
-            }}
-            value={settings.generator.method}
+            value={generator}
+            name="generator"
+            label="Generator"
+            onChange={handleAlgorithmChange}
           >
-            {Object.keys(generators).map((algorithmType) => {
-              console.log(algorithmType);
-              return <MenuItem value={algorithmType}>{algorithmType}</MenuItem>;
+            {Object.entries(generators).map(([key]) => {
+              return (
+                <MenuItem key={key} value={key}>
+                  {key}
+                </MenuItem>
+              );
             })}
           </Select>
         </FormControl>
-        <FormGroup
-          aria-label="position"
-          row
-          style={{ justifyContent: "flex-end" }}
-        >
-          <FormControlLabel
-            value={settings.generator.type}
-            control={
-              <Switch
-                defaultChecked
-                color="default"
-                onChange={(e) => {
-                  changeController(e, "generator", {
-                    type: e.target.checked ? "iterative" : "recursive",
-                    method: settings.generator.method,
-                  });
-                }}
-              />
-            }
-            label={settings.generator.type}
-            labelPlacement="start"
-          />
-        </FormGroup>
-      </FormSection>
-      <FormSection>
-        <InputLabel>Solver</InputLabel>
-        <FormControl fullWidth style={{ margin: "5px" }}>
+      </DropDownWrapper>
+      <DropDownWrapper>
+        <FormControl fullWidth>
+          <InputLabel id="demo-simple-select-label">Solver</InputLabel>
           <Select
             labelId="demo-simple-select-label"
             id="demo-simple-select"
-            label="Generation Algorithm"
-            variant="standard"
-            value={settings.solver.method}
-            onChange={(e) => {
-              changeController(e, "solver", {
-                type: "iterative",
-                method: e.target.value,
-              });
-            }}
+            value={solver}
+            label="Solver"
+            name="solver"
+            onChange={handleAlgorithmChange}
           >
-            {Object.keys(solvers).map((algorithmType) => {
-              return <MenuItem value={algorithmType}>{algorithmType}</MenuItem>;
+            {Object.entries(solvers).map(([key]) => {
+              return (
+                <MenuItem key={key} value={key}>
+                  {key}
+                </MenuItem>
+              );
             })}
           </Select>
         </FormControl>
-        <FormGroup
-          aria-label="position"
-          row
-          style={{ justifyContent: "flex-end" }}
-        >
-          <FormControlLabel
-            value={settings.solver.type}
-            control={
-              <Switch
-                defaultChecked
-                color="default"
-                onChange={(e) => {
-                  changeController(e, "solver", {
-                    type: e.target.checked ? "iterative" : "recursive",
-                    method: settings.solver.method,
-                  });
-                }}
-              />
-            }
-            label={settings.solver.type}
-            labelPlacement="start"
-          />
-        </FormGroup>
-      </FormSection>
+      </DropDownWrapper>
+
       {/* Buttons */}
       <FormSection>
         <div
@@ -202,7 +155,7 @@ const Settings = ({
           <Button
             variant="outlined"
             sx={{ marginRight: "5px" }}
-            onClick={solveClick}
+            onClick={handleSolveClick}
           >
             Solve
           </Button>

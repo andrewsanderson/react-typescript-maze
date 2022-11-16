@@ -1,4 +1,4 @@
-import Maze from "./Components/Maze";
+import Maze from "./Components/MazeComponent";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
 import purple from "@mui/material/colors/purple";

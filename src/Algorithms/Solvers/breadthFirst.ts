@@ -1,38 +1,34 @@
-// import Pathing from "../../Models/Pathing";
-// import Node from "../../Models/Cell";
-// import Graph from "../../Models/Graph";
-// import { algorithmConstructor } from "../Framework";
-// import defaultSolution from "./defaultSolution";
+import Cell from "../../Models/Maze/Cell";
+import Maze from "../../Models/Maze/Graph";
+import Tree, { GetChildren, InsertChildren } from "../../Models/Pathing/Tree";
+import Node from "../../Models/Pathing/Node";
 
-// const childAcquisition = (maze: Graph) => {
-//   const { pathing } = maze;
-//   const { queued, current, exhausted } = pathing;
+const breadthFirst = (maze: Maze) => {
+  const getChildren: GetChildren<Cell> = (currentNode) => {
+    const children = Object.values(currentNode.value.neighbors).filter(
+      (neighbor) => {
+        return neighbor !== null;
+      }
+    ) as Array<Cell>;
 
-//   const currentNode = pathing.getCurrentNode();
+    return children;
+  };
 
-//   // acquire children as array that are not null
-//   const possibleChildren: Array<Node> = Object.values(
-//     currentNode.neighbors
-//   ).filter((node): node is Node => !!node);
+  const insertChildren: InsertChildren<Cell> = (queue, children) => {
+    queue.queue(...children);
+  };
 
-//   // filter children out that are already queued, in the current branch, already exhausted
-//   const useableChildren = possibleChildren.filter((child) => {
-//     return !(
-//       queued.includes(child) ||
-//       current.includes(child) ||
-//       exhausted.includes(child)
-//     );
-//   });
-//   return useableChildren;
-// };
-// const pathMutation = (path: Pathing, children: Array<Node>) => {
-//   path.queued.push(...children);
-// };
+  const solver = (node: Node<Cell>) => {
+    return node.value.id === maze.width * maze.height - 1;
+  };
 
-// const breadthFirst = (constructor: algorithmConstructor) => {
-//   return constructor(childAcquisition, pathMutation, defaultSolution);
-// };
+  const tree = new Tree(maze.cells[0], getChildren, insertChildren, solver);
 
-// export default breadthFirst;
+  for (const item of tree) {
+    void item;
+  }
 
-export {};
+  return tree.solution;
+};
+
+export default breadthFirst;
