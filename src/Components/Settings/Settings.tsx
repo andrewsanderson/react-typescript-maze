@@ -8,13 +8,8 @@ import {
   Select,
   InputLabel,
   MenuItem,
-  Switch,
-  FormControlLabel,
-  FormGroup,
 } from "@mui/material";
-import Graph from "../../Models/Maze/Graph";
-import Node from "../../Models/Pathing/Node";
-import Cell from "../../Models/Maze/Cell";
+
 import generators from "../../Algorithms/Generators";
 import solvers from "../../Algorithms/Solvers";
 
@@ -34,14 +29,9 @@ const FormSection = styled("div")``;
 interface SettingsProps {
   settingsState: settings;
   setSettingsState: React.Dispatch<React.SetStateAction<settings>>;
-  solve: () => void;
 }
 
-const Settings = ({
-  settingsState,
-  setSettingsState,
-  solve,
-}: SettingsProps) => {
+const Settings = ({ settingsState, setSettingsState }: SettingsProps) => {
   const { height, width, solver, generator } = settingsState;
 
   const handleDimensionChange = (e: Event) => {
@@ -54,9 +44,9 @@ const Settings = ({
     setSettingsState({ ...settingsState, [name]: value });
   };
 
-  const handleSolveClick = () => {
-    solve();
-  };
+  // const handleSolveClick = () => {
+  //   solve();
+  // };
 
   return (
     <Container>
@@ -152,13 +142,13 @@ const Settings = ({
         <div
           style={{ padding: "10px", display: "flex", justifyContent: "center" }}
         >
-          <Button
+          {/* <Button
             variant="outlined"
             sx={{ marginRight: "5px" }}
             onClick={handleSolveClick}
           >
             Solve
-          </Button>
+          </Button> */}
         </div>
       </FormSection>
     </Container>

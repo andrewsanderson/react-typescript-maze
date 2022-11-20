@@ -14,6 +14,7 @@ const depthFirst = (maze: Maze) => {
     return children;
   };
 
+  // Add only the first node to the queue.
   const insertChildren: InsertChildren<Cell> = (queue, children) => {
     queue.queue(children[0]);
   };
@@ -24,10 +25,7 @@ const depthFirst = (maze: Maze) => {
 
   const tree = new Tree(maze.cells[0], getChildren, insertChildren, solver);
 
-  for (const items of tree) {
-  }
-
-  return tree.solution;
+  return tree;
 };
 
 export default depthFirst;

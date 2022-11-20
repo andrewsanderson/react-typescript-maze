@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 import Graph from "../Models/Maze/Graph";
 import Settings from "./Settings/Settings";
@@ -8,6 +8,22 @@ import Cell from "../Models/Maze/Cell";
 import CellComponent from "./CellComponent";
 import generators from "../Algorithms/Generators";
 import solvers from "../Algorithms/Solvers";
+import Tree from "../Models/Pathing/Tree";
+
+// Hook
+function usePrevious<T>(value: T): T {
+  // The ref object is a generic container whose current property is mutable ...
+  // ... and can hold any value, similar to an instance property on a class
+  const ref: any = useRef<T>();
+  // Store current value in ref
+  useEffect(() => {
+    ref.current = value;
+  }, [value]); // Only re-run if value changes
+  // Return previous value (happens before update in useEffect above)
+  return ref.current;
+}
+
+let tree: Generator<Node<Cell>[] | void>;
 
 const Row = styled("div")`
   display: flex;
@@ -55,23 +71,44 @@ const MazeComponent = () => {
     new Graph({ height, width })
   );
 
-  const [solutionState, setSolutionState] = useState<
-    Array<Node<Cell>> | undefined
-  >();
+  const [nodesState, setNodesState] = useState<Array<Node<Cell> | undefined>>();
 
-  const solveMaze = () => {
-    return setSolutionState(solvers[solver](mazeState));
+  const setNewTree = (solver: keyof typeof solvers, mazeState: Graph) => {
+    tree = solvers[solver](mazeState).generator();
   };
 
+  const prevSettings: settings = usePrevious<settings>(settingsState);
+
   useEffect(() => {
-    const newMaze = new Graph({ height, width });
-    setMazeState(generators[generator](newMaze));
-    setSolutionState(undefined);
-  }, [height, width, generator, solver]);
+    if (JSON.stringify(prevSettings) !== JSON.stringify(settingsState)) {
+      const newMaze = new Graph({ height, width });
+      setMazeState(generators[generator](newMaze));
+      tree = solvers[solver](newMaze).generator();
+    } else if (tree !== undefined) {
+      setTimeout(() => {
+        setNodesState(tree.next().value);
+      }, 500);
+    }
+  }, [
+    height,
+    width,
+    generator,
+    solver,
+    prevSettings,
+    settingsState,
+    mazeState,
+    nodesState,
+  ]);
+
+  const onClick = () => {
+    setNodesState(tree.next().value);
+  };
 
   return (
     <Wrapper>
       <MazeContainer>
+        <button onClick={onClick}>Tr</button>
+
         <MazeBorder>
           {[...Array(mazeState.height).keys()].map((yVal) => {
             return (
@@ -81,38 +118,41 @@ const MazeComponent = () => {
                     return cell.coordinates.y === yVal;
                   })
                   .map((cell) => {
-                    // find the position of the node in the solution
-                    const position = solutionState?.findIndex(
-                      (solutionNode) => {
-                        return solutionNode.value === cell;
-                      }
-                    ) as number;
+                    // // find the position of the node in the solution
+                    // const position = solutionState?.findIndex(
+                    //   (solutionNode) => {
+                    //     return solutionNode.value === cell;
+                    //   }
+                    // ) as settings;
 
-                    // Get the previous node in the solution
-                    const lastNeighbor =
-                      !!position &&
-                      !!solutionState &&
-                      solutionState[position - 1];
+                    // // Get the previous node in the solution
+                    // const lastNeighbor =
+                    //   !!position &&
+                    //   !!solutionState &&
+                    //   solutionState[position - 1];
 
-                    // Get the direction of said node.
-                    const direction = !!lastNeighbor
-                      ? cell.getCellDirection(lastNeighbor.value)
-                      : undefined;
+                    // // Get the direction of said node.
+                    // const direction = !!lastNeighbor
+                    //   ? cell.getCellDirection(lastNeighbor.value)
+                    //   : undefined;
 
-                    const length = !!solutionState ? solutionState.length : 0;
+                    // const length = !!solutionState ? solutionState.length : 0;
 
-                    const last =
-                      cell.id ===
-                      settingsState.height * settingsState.width - 1;
+                    // const last =
+                    //   cell.id ===
+                    //   settingsState.height * settingsState.width - 1;
+
+                    const status =
+                      nodesState !== undefined &&
+                      Array.from(nodesState).find((node) => {
+                        return node?.value.id === cell.id;
+                      })?.status;
 
                     return (
                       <CellComponent
                         key={cell.id}
                         cell={cell}
-                        position={position}
-                        length={length}
-                        direction={direction}
-                        last={last}
+                        status={status}
                       />
                     );
                   })}
@@ -124,7 +164,6 @@ const MazeComponent = () => {
       <Settings
         settingsState={settingsState}
         setSettingsState={setSettingsState}
-        solve={solveMaze}
       />
     </Wrapper>
   );

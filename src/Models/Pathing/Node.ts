@@ -10,7 +10,7 @@ class Node<NodeType> {
   /**
    * The immediate parent of this node.
    */
-  parent?: Node<NodeType>;
+  readonly parent?: Node<NodeType>;
   constructor(value: NodeType, parent?: Node<NodeType>) {
     this.value = value;
     this.parent = parent;

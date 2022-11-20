@@ -1,3 +1,4 @@
+import Cell from "../Maze/Cell";
 import Node from "./Node";
 
 export type GetChildren<NodeValue> = (
@@ -61,6 +62,12 @@ class Stack<NodeType> {
     return !!this.#nodes.find((node) => {
       return node.value === value;
     });
+  }
+  values() {
+    const ret: Array<Node<NodeType>> = this.#nodes.map((node) => {
+      return Object.assign(Object.create(Object.getPrototypeOf(node)), node);
+    });
+    return ret;
   }
 }
 
@@ -138,7 +145,7 @@ class Tree<NodeType> {
         currentNode.status = "exhausted";
       }
       // Return the current node.
-      yield currentNode;
+      yield this.stack.values();
     }
   }
 
