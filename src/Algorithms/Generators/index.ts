@@ -1,4 +1,5 @@
 import kruskals from "./kruskal";
+import modifiedPrims from "./modifiedPrims";
 import randomisedDepthFirst from "./randomisedDepthFirst";
 
 // Utilities
@@ -36,6 +37,10 @@ export const randomNumber = (max: number) => {
   return Math.floor(Math.random() * (max + 1));
 };
 
-const generators = { randomisedDepthFirst, kruskals };
+const generators = {
+  "Randomised Depth First": randomisedDepthFirst,
+  Kruskals: kruskals,
+  "Modified Prims": modifiedPrims,
+};
 
 export default generators;

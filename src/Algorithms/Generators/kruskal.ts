@@ -2,12 +2,6 @@ import { randomNumber } from ".";
 import Cell, { Neighbors } from "../../Models/Maze/Cell";
 import Maze from "../../Models/Maze/Graph";
 
-// Create a list of all walls, and create a set for each cell, each containing just that one cell.
-// For each wall, in some random order:
-// If the cells divided by this wall belong to distinct sets:
-// Remove the current wall.
-// Join the sets of the formerly divided cells.
-
 const kruskals = (maze: Maze) => {
   // Create a set from each of the cells.
   const cellSets = maze.cells.map((cell) => {

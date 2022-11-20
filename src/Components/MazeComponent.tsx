@@ -8,7 +8,9 @@ import Cell from "../Models/Maze/Cell";
 import CellComponent from "./CellComponent";
 import generators from "../Algorithms/Generators";
 import solvers from "../Algorithms/Solvers";
-import Tree from "../Models/Pathing/Tree";
+import { Button } from "@mui/material";
+import LoopIcon from "@mui/icons-material/Loop";
+import PlayArrowIcon from "@mui/icons-material/PlayArrow";
 
 // Hook
 function usePrevious<T>(value: T): T {
@@ -61,8 +63,8 @@ const MazeComponent = () => {
   const [settingsState, setSettingsState] = useState<settings>({
     width: 7,
     height: 7,
-    generator: "randomisedDepthFirst",
-    solver: "depthFirst",
+    generator: "Randomised Depth First",
+    solver: "Depth First",
   });
 
   const { height, width, solver, generator } = settingsState;
@@ -87,7 +89,7 @@ const MazeComponent = () => {
     } else if (tree !== undefined) {
       setTimeout(() => {
         setNodesState(tree.next().value);
-      }, 500);
+      }, 200);
     }
   }, [
     height,
@@ -107,7 +109,10 @@ const MazeComponent = () => {
   return (
     <Wrapper>
       <MazeContainer>
-        <button onClick={onClick}>Tr</button>
+        <Button onClick={onClick}>
+          <LoopIcon />
+          <PlayArrowIcon />
+        </Button>
 
         <MazeBorder>
           {[...Array(mazeState.height).keys()].map((yVal) => {
