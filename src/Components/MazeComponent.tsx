@@ -11,6 +11,7 @@ import solvers from "../Algorithms/Solvers";
 import { Button } from "@mui/material";
 import LoopIcon from "@mui/icons-material/Loop";
 import PlayArrowIcon from "@mui/icons-material/PlayArrow";
+import Tree from "../Models/Pathing/Tree";
 
 // Hook
 function usePrevious<T>(value: T): T {
@@ -25,7 +26,8 @@ function usePrevious<T>(value: T): T {
   return ref.current;
 }
 
-let tree: Generator<Node<Cell>[] | void>;
+let tree: Tree<Cell>;
+let treeGenerator: Generator<Node<Cell>[] | void>;
 
 const Row = styled("div")`
   display: flex;
@@ -76,7 +78,8 @@ const MazeComponent = () => {
   const [nodesState, setNodesState] = useState<Array<Node<Cell> | undefined>>();
 
   const setNewTree = (solver: keyof typeof solvers, mazeState: Graph) => {
-    tree = solvers[solver](mazeState).generator();
+    tree = solvers[solver](mazeState);
+    treeGenerator = tree.generator();
   };
 
   const prevSettings: settings = usePrevious<settings>(settingsState);
@@ -85,10 +88,19 @@ const MazeComponent = () => {
     if (JSON.stringify(prevSettings) !== JSON.stringify(settingsState)) {
       const newMaze = new Graph({ height, width });
       setMazeState(generators[generator](newMaze));
-      tree = solvers[solver](newMaze).generator();
+      tree = solvers[solver](newMaze);
+      treeGenerator = tree.generator();
     } else if (tree !== undefined) {
       setTimeout(() => {
-        setNodesState(tree.next().value);
+        if (tree.paths.length > 0) {
+          let endValue;
+          for (const next of tree.paths) {
+            endValue = treeGenerator.next().value;
+          }
+          setNodesState(endValue);
+        } else {
+          setNodesState(treeGenerator.next().value);
+        }
       }, 200);
     }
   }, [
@@ -103,7 +115,7 @@ const MazeComponent = () => {
   ]);
 
   const onClick = () => {
-    setNodesState(tree.next().value);
+    setNodesState(treeGenerator.next().value);
   };
 
   return (

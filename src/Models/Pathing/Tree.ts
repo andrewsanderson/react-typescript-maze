@@ -39,13 +39,25 @@ class Stack<NodeType> {
     });
     this.#nodes.reverse();
 
+    console.log("t", touchedNode);
+
     return queuedNode || touchedNode || false;
+  }
+
+  get length() {
+    return this.#nodes.length;
   }
 
   queue(...nodes: Array<Node<NodeType>>) {
     for (const node of nodes) {
       this.#nodes.push(node);
     }
+  }
+
+  get currentPaths() {
+    return this.#nodes.filter((node) => {
+      return node.status === "queued";
+    });
   }
 
   sort(sortMethod: (a: Node<NodeType>, b: Node<NodeType>) => number) {
@@ -136,14 +148,21 @@ class Tree<NodeType> {
           return new Node(filteredChild, currentNode);
         });
 
+      const currentQueueLength = this.stack.length;
+
       // If there are new children then insert them into the stack using the defined method.
       // Otherwise mark the current node as exhausted and progress.
       if (filteredChildren.length > 0) {
         currentNode.status = "touched";
         this.insertChildren(this.stack, filteredChildren);
-      } else {
+      }
+
+      // If all nodes acquired as children are added to the queue at the above stage we know
+      // there will be no further children to add to the queue so we can set this node as exhausted.
+      if (this.stack.length === currentQueueLength + filteredChildren.length) {
         currentNode.status = "exhausted";
       }
+      console.log(currentNode.value);
       // Return the current node.
       yield this.stack.values();
     }
@@ -151,6 +170,10 @@ class Tree<NodeType> {
 
   *[Symbol.iterator]() {
     yield* this.generator();
+  }
+
+  get paths() {
+    return this.stack.currentPaths;
   }
 }
 
