@@ -3,8 +3,13 @@ import Maze from "../../Models/Maze/Graph";
 import Tree, { GetChildren, InsertChildren } from "../../Models/Pathing/Tree";
 import Node from "../../Models/Pathing/Node";
 
+/**
+ *
+ * @param maze the maze to be solved using breadth first pathfinding.
+ * @returns a tree of nodes. The generator of which will return all nodes in the tree, in order to globally updates statuses.
+ */
 const breadthFirst = (maze: Maze) => {
-  // Get children via neighbors.
+  // Get previews of neighboring cells as children.
   const getChildren: GetChildren<Cell> = (currentNode) => {
     const children = Object.values(currentNode.value.neighbors).filter(
       (neighbor) => {

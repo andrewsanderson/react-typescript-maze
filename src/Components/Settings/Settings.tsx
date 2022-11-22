@@ -8,7 +8,9 @@ import {
   Select,
   InputLabel,
   MenuItem,
+  Switch,
 } from "@mui/material";
+import SettingsIcon from "@mui/icons-material/Settings";
 
 import generators from "../../Algorithms/Generators";
 import solvers from "../../Algorithms/Solvers";
@@ -48,6 +50,8 @@ const Settings = ({ settingsState, setSettingsState }: SettingsProps) => {
   //   solve();
   // };
 
+  <SettingsIcon style={{ backgroundColor: "red", borderRadius: "50%" }} />;
+
   return (
     <Container>
       <FormSection>
@@ -70,7 +74,7 @@ const Settings = ({ settingsState, setSettingsState }: SettingsProps) => {
             name="width"
             step={1}
             min={2}
-            max={20}
+            max={15}
             valueLabelDisplay="auto"
             onChange={handleDimensionChange}
           />
@@ -88,7 +92,7 @@ const Settings = ({ settingsState, setSettingsState }: SettingsProps) => {
             name="height"
             step={1}
             min={2}
-            max={20}
+            max={15}
             valueLabelDisplay="auto"
             onChange={handleDimensionChange}
           />
@@ -142,13 +146,7 @@ const Settings = ({ settingsState, setSettingsState }: SettingsProps) => {
         <div
           style={{ padding: "10px", display: "flex", justifyContent: "center" }}
         >
-          {/* <Button
-            variant="outlined"
-            sx={{ marginRight: "5px" }}
-            onClick={handleSolveClick}
-          >
-            Solve
-          </Button> */}
+          <Switch defaultChecked={false} icon={} />
         </div>
       </FormSection>
     </Container>

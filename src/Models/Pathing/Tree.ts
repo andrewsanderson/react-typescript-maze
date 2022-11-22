@@ -39,8 +39,6 @@ class Stack<NodeType> {
     });
     this.#nodes.reverse();
 
-    console.log("t", touchedNode);
-
     return queuedNode || touchedNode || false;
   }
 
@@ -93,6 +91,10 @@ class Tree<NodeType> {
   stack: Stack<NodeType>;
 
   /**
+   *
+   */
+  status: "failed" | "solved" | "working" = "working";
+  /**
    * The method used to acquire children when provided the context of the current node.
    */
   getChildren: GetChildren<NodeType>;
@@ -134,6 +136,8 @@ class Tree<NodeType> {
       // If the current node is the solution, push the solution up.
       if (!!this.solutionFinder && this.solutionFinder(currentNode)) {
         this.solution = currentNode.path;
+        this.status = "solved";
+        return;
       }
 
       // Get children of the current node.
@@ -162,10 +166,10 @@ class Tree<NodeType> {
       if (this.stack.length === currentQueueLength + filteredChildren.length) {
         currentNode.status = "exhausted";
       }
-      console.log(currentNode.value);
       // Return the current node.
       yield this.stack.values();
     }
+    this.status = "failed";
   }
 
   *[Symbol.iterator]() {

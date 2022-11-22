@@ -13,6 +13,10 @@ import LoopIcon from "@mui/icons-material/Loop";
 import PlayArrowIcon from "@mui/icons-material/PlayArrow";
 import Tree from "../Models/Pathing/Tree";
 
+function timeout(ms: number) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
 // Hook
 function usePrevious<T>(value: T): T {
   // The ref object is a generic container whose current property is mutable ...
@@ -38,6 +42,7 @@ export type settings = {
   width: number;
   solver: keyof typeof solvers;
   generator: keyof typeof generators;
+  solve: boolean;
 };
 
 const Wrapper = styled("div")`
@@ -67,41 +72,84 @@ const MazeComponent = () => {
     height: 7,
     generator: "Randomised Depth First",
     solver: "Depth First",
+    solve: false,
   });
 
   const { height, width, solver, generator } = settingsState;
 
+  const interval = 10 / (height * width);
+
   const [mazeState, setMazeState] = useState<Graph>(
-    new Graph({ height, width })
+    generators[generator](new Graph({ height, width }))
   );
 
-  const [nodesState, setNodesState] = useState<Array<Node<Cell> | undefined>>();
+  const [solutionState, setSolutionState] = useState<Array<Node<Cell>>>();
 
-  const setNewTree = (solver: keyof typeof solvers, mazeState: Graph) => {
-    tree = solvers[solver](mazeState);
-    treeGenerator = tree.generator();
-  };
+  const [nodesState, setNodesState] = useState<Array<Node<Cell> | undefined>>();
 
   const prevSettings: settings = usePrevious<settings>(settingsState);
 
   useEffect(() => {
-    if (JSON.stringify(prevSettings) !== JSON.stringify(settingsState)) {
+    // using the given keys, compare the old and new settings state to identify if any have changed.
+    const hasChanged = (...keys: Array<keyof typeof settingsState>) => {
+      if (!!prevSettings) {
+        for (const key of keys) {
+          if (prevSettings[key] !== settingsState[key]) {
+            return true;
+          }
+        }
+      }
+      return false;
+    };
+
+    // if height, width, or generator has changed
+    if (hasChanged("height", "width", "generator")) {
+      // generate a new maze with the given generator
       const newMaze = new Graph({ height, width });
+
+      // set it in staate
       setMazeState(generators[generator](newMaze));
+
+      // generate a new tree for use with the new maze.
       tree = solvers[solver](newMaze);
+      // reassign the treeGenerator variable with the generator of this new tree.
       treeGenerator = tree.generator();
-    } else if (tree !== undefined) {
-      setTimeout(() => {
-        if (tree.paths.length > 0) {
+
+      // remove current nodes.
+      setNodesState(undefined);
+    } else if (hasChanged("solver")) {
+      // if just the solver changes set a new tree from the solver.
+      tree = solvers[solver](mazeState);
+      // reasign the treeGenerator variable with the generator of the new tree
+      treeGenerator = tree.generator();
+    }
+    if (tree !== undefined) {
+      const thing = async () => {
+        await timeout(interval * 1000);
+        // If there is more than a single 'path' we'll progress them all so we can effectively illustrate tree progression.
+        if (tree.paths.length > 1) {
           let endValue;
           for (const next of tree.paths) {
-            endValue = treeGenerator.next().value;
+            const nextVal = treeGenerator.next().value;
+            if (nextVal === undefined) {
+              setSolutionState(tree.solution);
+            } else endValue = nextVal;
           }
-          setNodesState(endValue);
-        } else {
-          setNodesState(treeGenerator.next().value);
+          if (endValue !== undefined) {
+            setNodesState(endValue);
+          }
         }
-      }, 200);
+        // Otherwise simply progress to the next node
+        else {
+          const nextVal = treeGenerator.next().value;
+          if (nextVal === undefined) {
+            setSolutionState(tree.solution);
+          } else {
+            setNodesState(nextVal);
+          }
+        }
+      };
+      thing();
     }
   }, [
     height,
@@ -115,7 +163,12 @@ const MazeComponent = () => {
   ]);
 
   const onClick = () => {
-    setNodesState(treeGenerator.next().value);
+    const val = treeGenerator.next().value;
+    if (val !== undefined) {
+      setNodesState(val);
+    } else {
+      setSolutionState(tree.solution);
+    }
   };
 
   return (
@@ -135,29 +188,9 @@ const MazeComponent = () => {
                     return cell.coordinates.y === yVal;
                   })
                   .map((cell) => {
-                    // // find the position of the node in the solution
-                    // const position = solutionState?.findIndex(
-                    //   (solutionNode) => {
-                    //     return solutionNode.value === cell;
-                    //   }
-                    // ) as settings;
-
-                    // // Get the previous node in the solution
-                    // const lastNeighbor =
-                    //   !!position &&
-                    //   !!solutionState &&
-                    //   solutionState[position - 1];
-
-                    // // Get the direction of said node.
-                    // const direction = !!lastNeighbor
-                    //   ? cell.getCellDirection(lastNeighbor.value)
-                    //   : undefined;
-
-                    // const length = !!solutionState ? solutionState.length : 0;
-
-                    // const last =
-                    //   cell.id ===
-                    //   settingsState.height * settingsState.width - 1;
+                    const solutionIndex = solutionState?.findIndex((node) => {
+                      return node.value === cell;
+                    });
 
                     const status =
                       nodesState !== undefined &&
@@ -165,11 +198,32 @@ const MazeComponent = () => {
                         return node?.value.id === cell.id;
                       })?.status;
 
+                    const from =
+                      !!solutionState &&
+                      !!solutionIndex &&
+                      solutionIndex > -1 &&
+                      cell.getCellDirection(
+                        solutionState[solutionIndex - 1]?.value
+                      );
+
+                    const to =
+                      !!solutionState &&
+                      typeof solutionIndex === "number" &&
+                      solutionIndex > -1 &&
+                      solutionIndex < solutionState.length - 1 &&
+                      cell.getCellDirection(
+                        solutionState[solutionIndex + 1]?.value
+                      );
+
                     return (
                       <CellComponent
                         key={cell.id}
                         cell={cell}
                         status={status}
+                        solutionIndex={solutionIndex}
+                        from={from}
+                        to={to}
+                        interval={interval}
                       />
                     );
                   })}

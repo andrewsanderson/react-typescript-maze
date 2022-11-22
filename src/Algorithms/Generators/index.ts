@@ -1,8 +1,26 @@
+import Cell from "../../Models/Maze/Cell";
+import Graph from "../../Models/Maze/Graph";
 import kruskals from "./kruskal";
 import modifiedPrims from "./modifiedPrims";
 import randomisedDepthFirst from "./randomisedDepthFirst";
 
 // Utilities
+
+/**
+ *
+ * @param cell the cell you'd like the preview the nieghbors of.
+ * @param maze the maze context required to preview the neighbors.
+ * @returns neighbors of the given cell as Cell objects with nulls filtered out.
+ */
+export const getNeighborsOfCurrentNode = (cell: Cell, maze: Graph) => {
+  return Object.keys(cell.neighbors)
+    .map((direction) => {
+      return maze.peekNeighbor(cell, direction as keyof typeof cell.neighbors);
+    })
+    .filter((child) => {
+      return child !== null;
+    }) as Array<Cell>;
+};
 
 /**
  *
@@ -39,8 +57,8 @@ export const randomNumber = (max: number) => {
 
 const generators = {
   "Randomised Depth First": randomisedDepthFirst,
-  Kruskals: kruskals,
-  "Modified Prims": modifiedPrims,
+  "Randomised Kruskals": kruskals,
+  "Randomised Modified Prims": modifiedPrims,
 };
 
 export default generators;

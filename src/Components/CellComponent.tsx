@@ -6,6 +6,10 @@ import Node, { Neighbors } from "../Models/Maze/Cell";
 interface CellProps {
   cell: Node;
   status: "queued" | "touched" | "exhausted" | false | undefined;
+  solutionIndex: number | undefined;
+  from: string | boolean | undefined;
+  to: string | boolean | undefined;
+  interval: number;
 }
 
 const Walls = styled("div")<{
@@ -20,66 +24,148 @@ const Walls = styled("div")<{
   align-items: center;
 `;
 
-const Background = styled("div")<{
-  position: number;
+const vertices = ["top", "right", "bottom", "left"];
+
+const styleGen = (
+  direction: "from" | "to",
+  vertex: string | boolean | undefined
+) => {
+  const styles = [];
+  if (direction === "to" && typeof vertex === "string") {
+    const currentIndex = vertices.indexOf(vertex);
+    const opposite = vertices[(currentIndex + 2) % 4];
+    styles.push(`${opposite}:0%`);
+    styles.push(`margin-${opposite}:50%`);
+  } else {
+    styles.push(`${vertex}:0%`);
+  }
+  return styles.join("; ");
+};
+
+const animateThis = (vertex: string | boolean | undefined) => {
+  return vertex === "top" || vertex === "bottom"
+    ? keyframes` 
+0% {
+  width: 3px;
+  height: 0%;
+}
+100% {
+  width: 3px;
+  height: 50%;
+}`
+    : keyframes` 
+0% {
+  width: 0%;
+  height: 3px;
+}
+100% {
+  width: 50%;
+  height: 3px
+}`;
+};
+
+const animateCircle = (solutionIndex: number, status: any) => {
+  const statusColor = () => {
+    switch (status) {
+      case "queued":
+        return "rgba(00,255,0,1)";
+      case "touched":
+        return "rgba(00,00,255,1)";
+      case "exhausted":
+        return "rgba(255, 0, 0, 1)";
+      default:
+        return " #00000000";
+    }
+  };
+
+  return solutionIndex > -1
+    ? keyframes` 
+0% {
+  background-color: ${statusColor()}
+}
+100% {
+  background-color: pink;
+}`
+    : keyframes` 
+0% {
+  background-color: ${statusColor()}
+}
+100% {
+  background-color: ${statusColor()}
+}`;
+};
+
+const From = styled("div")<{
+  from: string | boolean | undefined;
   interval: number;
-  direction: keyof Neighbors | undefined;
+  solutionIndex: number;
 }>`
-  z-index: -10;
+  ${({ from }) => styleGen("from", from)};
   position: absolute;
-  width: 100%;
-  height: 100%;
-  background: ${({ position }) =>
-    position >= 0 && "linear-gradient(to bottom, purple 50%, #00000000 50%)"};
-  animation: ${keyframes`
-  from {
-    background-position:bottom
-  }
-  to {
-    background-position:top;
-  }
-  `} ${({ interval }) => interval}s linear 1;
-  animation-fill-mode: backwards;
-  background-size: 100% 200%;
-  animation-delay: ${({ position, interval }) => position * interval}s;
-  transform: rotate(${({ direction }) => bgDirectionGenerator(direction)});
+  background-color: pink;
+  -webkit-animation: ${({ from }) => animateThis(from)}
+    ${({ interval }) => interval}s linear;
+  -webkit-animation-fill-mode: forwards;
+  animation: ${({ from }) => animateThis(from)} ${({ interval }) => interval}s
+    linear 1;
+  animation-fill-mode: forwards;
+  z-index: -10;
+  animation-delay: ${({ interval, solutionIndex }) =>
+    interval * solutionIndex + 0.2}s;
 `;
 
-const Background2 = styled("div")<{
+const To = styled("div")<{
+  to: string | boolean | undefined;
+  interval: number;
+  solutionIndex: number;
+}>`
+  ${({ to }) => styleGen("to", to)};
+  position: absolute;
+  background-color: pink;
+  -webkit-animation: ${({ to }) => animateThis(to)}
+    ${({ interval }) => interval}s linear;
+  -webkit-animation-fill-mode: forwards;
+  animation: ${({ to }) => animateThis(to)} ${({ interval }) => interval / 2}s
+    linear 1;
+  animation-fill-mode: forwards;
+  z-index: -10;
+  animation-delay: ${({ interval, solutionIndex }) =>
+    interval * solutionIndex + interval / 2 + 0.2}s;
+`;
+
+const Circle = styled("div")<{
   status: "queued" | "touched" | "exhausted" | false | undefined;
+  solutionIndex: number;
+  interval: number;
 }>`
   border-radius: 50%;
   height: 10px;
   width: 10px;
   padding: 5px;
+  z-index: 10;
   background-color: ${({ status }) => {
     switch (status) {
       case "queued":
-        return "green";
+        return "rgba(00,255,0,1)";
       case "touched":
-        return "rgba(00,00,00,0.3)";
+        return "rgba(00,00,255,1)";
       case "exhausted":
-        return "red";
+        return "rgba(255, 0, 0, 1)";
       default:
         return "#00000000";
     }
   }};
+  -webkit-animation: ${({ solutionIndex, status }) =>
+      animateCircle(solutionIndex, status)}
+    0s linear;
+  -webkit-animation-fill-mode: forwards;
+  animation: ${({ solutionIndex, status }) =>
+      animateCircle(solutionIndex, status)}
+    0s linear 1;
+  animation-fill-mode: forwards;
+  animation-delay: ${({ interval, solutionIndex }) =>
+    interval * solutionIndex + interval / 2 + 0.2}s;
 `;
-
-const bgDirectionGenerator = (direction: keyof Neighbors | undefined) => {
-  if (direction !== undefined) {
-    switch (direction) {
-      case "up":
-        return "0deg";
-      case "down":
-        return "180deg";
-      case "right":
-        return "90deg";
-      case "left":
-        return "270deg";
-    }
-  }
-};
 
 const wallStylesGenerator = (cell: Cell) => {
   const { neighbors } = cell;
@@ -91,55 +177,82 @@ const wallStylesGenerator = (cell: Cell) => {
     "-1px 0 0 0 white",
   ];
 
-  // Iterate over the neighbors.
-  // If they are either the first or last cell in the maze (start and end points) apply specific walls at certain indexes.
-  // Otherwise if the neighbor exists add the wall to the cell. If no neighbor exists add an transparent wall so that the cell width remains universal.
   const wallWidthString = Object.values(neighbors).map((neighbor, index) => {
     if (!!neighbor) {
       return "0 0 0 0 white";
-      // } else if (index === 2 && last) {
-      //   return `0 2px 0 0 purple`;
-      // } else if (index === 0 && id === 0) {
-      //   return `0 -2px 0 0 purple`;
     } else {
       return potentialWalls[index];
     }
   });
 
-  // Return this collection join by commas.
   return wallWidthString.join(", ");
 };
 
-const CellComponent = ({ cell, status }: CellProps) => {
+const CellComponent = ({
+  cell,
+  status,
+  interval,
+  solutionIndex,
+  from,
+  to,
+}: CellProps) => {
   return (
     <Walls cell={cell}>
-      {/* {position >= 0 && (
-        <Background
-          position={position}
-          interval={3 / length}
-          direction={direction}
+      {!!from && (
+        <From
+          from={from}
+          interval={interval}
+          solutionIndex={typeof solutionIndex === "number" ? solutionIndex : -1}
         />
-      )} */}
-      <Background2 status={status} />
+      )}
+      {!!to && (
+        <To
+          to={to}
+          interval={interval}
+          solutionIndex={typeof solutionIndex === "number" ? solutionIndex : -1}
+        />
+      )}
+      <Circle
+        interval={interval}
+        status={status}
+        solutionIndex={typeof solutionIndex === "number" ? solutionIndex : -1}
+      />
     </Walls>
   );
 };
 
-// export default CellComponent;
-
 export default memo(
   CellComponent,
   (
-    { cell: oldCell, status: oldStatus }: Readonly<CellProps>,
-    { cell: newCell, status: newStatus }: Readonly<CellProps>
+    {
+      cell: oldCell,
+      status: oldStatus,
+      solutionIndex: oldSI,
+      from: oldFrom,
+      to: oldTo,
+    }: Readonly<CellProps>,
+    {
+      cell: newCell,
+      status: newStatus,
+      solutionIndex: newSI,
+      from: newFrom,
+      to: newTo,
+    }: Readonly<CellProps>
   ) => {
     const oldNeighbors = () =>
-      Object.values(oldCell.neighbors).filter((neighbor) => neighbor !== null)
-        .length;
+      Object.values(oldCell.neighbors).map((node) => {
+        return node?.id;
+      });
     const newNeighbors = () =>
-      Object.values(newCell.neighbors).filter((neighbor) => neighbor !== null)
-        .length;
+      Object.values(newCell.neighbors).map((node) => {
+        return node?.id;
+      });
 
-    return oldNeighbors === newNeighbors && oldStatus === newStatus;
+    return (
+      JSON.stringify(oldNeighbors()) === JSON.stringify(newNeighbors()) &&
+      oldStatus === newStatus &&
+      oldFrom === newFrom &&
+      oldTo === newTo
+    );
   }
 );

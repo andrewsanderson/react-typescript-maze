@@ -1,8 +1,25 @@
-import { randomNumber } from ".";
-import Cell, { Neighbors } from "../../Models/Maze/Cell";
-import Maze from "../../Models/Maze/Graph";
+import { getNeighborsOfCurrentNode, randomNumber } from ".";
+import Cell from "../../Models/Maze/Cell";
+import Graph from "../../Models/Maze/Graph";
 
-const kruskals = (maze: Maze) => {
+/**
+ *
+ * ref: <a>https://en.wikipedia.org/wiki/Kruskal%27s_algorithm</a>
+ *
+ * Create a list of all walls, and create a set for each cell, each containing just that one cell.
+ *
+ * For each wall, in some random order:
+ *
+ * If the cells divided by this wall belong to distinct sets:
+ *
+ * &nbsp; Remove the current wall.
+ *
+ * &nbsp; Join the sets of the formerly divided cells.
+ *
+ * @param maze the maze that is to be generated using this method.
+ * @returns the cells of the maze are mutated within the function so no return is necessary but the maze is returned in case the functionality needs adapting.
+ */
+const kruskals = (maze: Graph) => {
   // Create a set from each of the cells.
   const cellSets = maze.cells.map((cell) => {
     return [cell];
@@ -40,13 +57,7 @@ const kruskals = (maze: Maze) => {
     const randomNode = randomSet[randomNumber(randomSet.length - 1)];
 
     // Find the neighbors of the randomly selected node.
-    const neighbors = Object.keys(randomNode.neighbors)
-      .map((direction) => {
-        return maze.peekNeighbor(randomNode, direction as keyof Neighbors);
-      })
-      .filter((child) => {
-        return child !== null;
-      }) as Array<Cell>;
+    const neighbors = getNeighborsOfCurrentNode(randomNode, maze);
 
     // Choose one of these neighbors at random.
     const randomNeighbor = neighbors[randomNumber(neighbors.length - 1)];

@@ -5,7 +5,7 @@ interface Config {
   height: number;
 }
 
-class Maze {
+class Graph {
   width = 0;
   height = 0;
   cells: Array<Cell> = [];
@@ -56,4 +56,4 @@ class Maze {
   }
 }
 
-export default Maze;
+export default Graph;

@@ -4,9 +4,9 @@ export interface Coordinates {
 }
 
 export type Neighbors = {
-  up: Cell | null;
+  top: Cell | null;
   right: Cell | null;
-  down: Cell | null;
+  bottom: Cell | null;
   left: Cell | null;
 };
 
@@ -14,9 +14,9 @@ class Cell {
   id: number;
   coordinates: Coordinates;
   neighbors: Neighbors = {
-    up: null,
+    top: null,
     right: null,
-    down: null,
+    bottom: null,
     left: null,
   };
 
@@ -32,14 +32,14 @@ class Cell {
    */
   inverseDirection(direction: keyof Neighbors): keyof Neighbors {
     switch (direction) {
-      case 'up':
-        return 'down';
-      case 'right':
-        return 'left';
-      case 'down':
-        return 'up';
-      case 'left':
-        return 'right';
+      case "top":
+        return "bottom";
+      case "right":
+        return "left";
+      case "bottom":
+        return "top";
+      case "left":
+        return "right";
     }
   }
 
@@ -51,16 +51,16 @@ class Cell {
   generateNeighborCoordinates(direction: keyof Neighbors) {
     let { x, y } = { ...this.coordinates };
     switch (direction) {
-      case 'up':
+      case "top":
         y--;
         break;
-      case 'right':
+      case "right":
         x++;
         break;
-      case 'down':
+      case "bottom":
         y++;
         break;
-      case 'left':
+      case "left":
         x--;
         break;
     }
@@ -70,28 +70,28 @@ class Cell {
   /**
    *
    * @param cell the cell we're looking to discern the direction of, when compared to the current cell.
-   * @returns the direction of the supplied cell if it is neighboring the current cell, otherwise it will log the error.
+   * @returns the direction of the stopplied cell if it is neighboring the current cell, otherwise it will log the error.
    */
   getCellDirection(cell: Cell) {
     const xdif = this.coordinates.x - cell.coordinates.x;
     const ydif = this.coordinates.y - cell.coordinates.y;
 
     if (xdif > 1 || ydif > 1) {
-      console.log('OOB non-neighbor');
+      console.log("OOB non-neighbor");
     } else {
       switch ([xdif, ydif].toString()) {
-        // up
+        // top
         case [0, 1].toString():
-          return 'up';
+          return "top";
         // right
         case [-1, 0].toString():
-          return 'right';
-        // down
+          return "right";
+        // bottom
         case [0, -1].toString():
-          return 'down';
+          return "bottom";
         // left
         case [1, 0].toString():
-          return 'left';
+          return "left";
       }
     }
   }
