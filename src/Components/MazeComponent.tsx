@@ -75,7 +75,7 @@ const MazeComponent = () => {
     solve: false,
   });
 
-  const { height, width, solver, generator } = settingsState;
+  const { height, width, solver, generator, solve } = settingsState;
 
   const interval = 10 / (height * width);
 
@@ -122,34 +122,37 @@ const MazeComponent = () => {
       tree = solvers[solver](mazeState);
       // reasign the treeGenerator variable with the generator of the new tree
       treeGenerator = tree.generator();
-    }
-    if (tree !== undefined) {
-      const thing = async () => {
-        await timeout(interval * 1000);
-        // If there is more than a single 'path' we'll progress them all so we can effectively illustrate tree progression.
-        if (tree.paths.length > 1) {
-          let endValue;
-          for (const next of tree.paths) {
+    } else if (solve) {
+      if (tree !== undefined) {
+        const thing = async () => {
+          await timeout(interval * 1000);
+          // If there is more than a single 'path' we'll progress them all so we can effectively illustrate tree progression.
+          if (tree.paths.length > 1) {
+            let endValue;
+            for (const next of tree.paths) {
+              const nextVal = treeGenerator.next().value;
+              if (nextVal === undefined) {
+                setSettingsState({ ...settingsState, solve: false });
+                setSolutionState(tree.solution);
+              } else endValue = nextVal;
+            }
+            if (endValue !== undefined) {
+              setNodesState(endValue);
+            }
+          }
+          // Otherwise simply progress to the next node
+          else {
             const nextVal = treeGenerator.next().value;
             if (nextVal === undefined) {
+              setSettingsState({ ...settingsState, solve: false });
               setSolutionState(tree.solution);
-            } else endValue = nextVal;
+            } else {
+              setNodesState(nextVal);
+            }
           }
-          if (endValue !== undefined) {
-            setNodesState(endValue);
-          }
-        }
-        // Otherwise simply progress to the next node
-        else {
-          const nextVal = treeGenerator.next().value;
-          if (nextVal === undefined) {
-            setSolutionState(tree.solution);
-          } else {
-            setNodesState(nextVal);
-          }
-        }
-      };
-      thing();
+        };
+        thing();
+      }
     }
   }, [
     height,
@@ -160,6 +163,7 @@ const MazeComponent = () => {
     settingsState,
     mazeState,
     nodesState,
+    solve,
   ]);
 
   const onClick = () => {

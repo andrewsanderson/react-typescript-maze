@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled, { keyframes } from "styled-components";
 import { settings } from "../MazeComponent";
 import {
   Button,
@@ -10,10 +10,39 @@ import {
   MenuItem,
   Switch,
 } from "@mui/material";
-import SettingsIcon from "@mui/icons-material/Settings";
+import SyncIcon from "@mui/icons-material/Sync";
+import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
 
 import generators from "../../Algorithms/Generators";
 import solvers from "../../Algorithms/Solvers";
+
+// const Icon = () => {
+//   return (
+//     <RotatingIcon>
+//       <SettingsIcon style={{ backgroundColor: "red", borderRadius: "50%" width:'100%' height:'100' }} />
+//     </RotatingIcon>
+//   );
+// };
+
+const rotation = keyframes`{
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(359deg);
+  }
+}`;
+
+const RotatingIcon = styled(SyncIcon)`
+  animation: ${rotation} 2s infinite linear;
+  background-color: blue;
+  border-radius: 50%;
+`;
+
+const DefaultIcon = styled(HelpOutlineIcon)`
+  background-color: blue;
+  border-radius: 50%;
+`;
 
 const Container = styled("div")`
   padding: 40px 20px;
@@ -34,8 +63,9 @@ interface SettingsProps {
 }
 
 const Settings = ({ settingsState, setSettingsState }: SettingsProps) => {
-  const { height, width, solver, generator } = settingsState;
+  const { height, width, solver, generator, solve } = settingsState;
 
+  console.log(solve);
   const handleDimensionChange = (e: Event) => {
     const { value, name } = e.target as HTMLInputElement;
     setSettingsState({ ...settingsState, [name]: value });
@@ -49,8 +79,6 @@ const Settings = ({ settingsState, setSettingsState }: SettingsProps) => {
   // const handleSolveClick = () => {
   //   solve();
   // };
-
-  <SettingsIcon style={{ backgroundColor: "red", borderRadius: "50%" }} />;
 
   return (
     <Container>
@@ -144,9 +172,23 @@ const Settings = ({ settingsState, setSettingsState }: SettingsProps) => {
       {/* Buttons */}
       <FormSection>
         <div
-          style={{ padding: "10px", display: "flex", justifyContent: "center" }}
+          style={{
+            padding: "10px",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
         >
-          <Switch defaultChecked={false} icon={} />
+          Solve?
+          <Switch
+            icon={<DefaultIcon />}
+            checkedIcon={<RotatingIcon />}
+            checked={solve}
+            onChange={(e, val) => {
+              const newSettings: settings = { ...settingsState, solve: val };
+              setSettingsState(newSettings);
+            }}
+          />
         </div>
       </FormSection>
     </Container>
