@@ -92,7 +92,7 @@ const animatePathing = (axis: string | boolean | undefined) => {
 }`;
 };
 
-const statusColor = (status:) => {
+const statusColor = (status: any) => {
   switch (status) {
     case "queued":
       return "rgba(00,255,0,1)";
@@ -143,7 +143,7 @@ const Path = styled("div")<{
     (interval * solutionIndex) / (axis === "to" ? 2 : 1) + 0.2}s;
 `;
 
-const Circle = styled("div")<{
+export const Circle = styled("div")<{
   status: "queued" | "touched" | "exhausted" | false | undefined;
   solutionIndex: number;
   interval: number;
@@ -156,7 +156,7 @@ const Circle = styled("div")<{
   background-color: ${({ status }) => statusColor(status)}};
   -webkit-animation: ${({ solutionIndex, status }) =>
     transitionCircle(solutionIndex, status)}
-    0s linear;
+    .2s linear;
   -webkit-animation-fill-mode: forwards;
   animation: ${({ solutionIndex, status }) =>
     transitionCircle(solutionIndex, status)}

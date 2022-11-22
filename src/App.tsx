@@ -4,6 +4,7 @@ import CssBaseline from "@mui/material/CssBaseline";
 import purple from "@mui/material/colors/purple";
 import styled from "styled-components";
 import { darken } from "@mui/material/styles";
+import KeyComponent from "./Components/KeyComponent";
 
 const AppContainer = styled("div")`
   background-color: ${darken(purple[900], 0.5)};

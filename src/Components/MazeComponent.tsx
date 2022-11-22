@@ -12,6 +12,7 @@ import { Button } from "@mui/material";
 import LoopIcon from "@mui/icons-material/Loop";
 import PlayArrowIcon from "@mui/icons-material/PlayArrow";
 import Tree from "../Models/Pathing/Tree";
+import KeyComponent from "./KeyComponent";
 
 function timeout(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms));
@@ -226,6 +227,7 @@ const MazeComponent = () => {
             );
           })}
         </MazeBorder>
+        <KeyComponent />
       </MazeContainer>
       <Settings
         settingsState={settingsState}
