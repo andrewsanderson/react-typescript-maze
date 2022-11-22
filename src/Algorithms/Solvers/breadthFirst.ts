@@ -25,7 +25,7 @@ const breadthFirst = (maze: Maze) => {
     queue.queue(...children);
   };
 
-  // Solution is when the node height is found
+  // Solution is when the last node is found
   const solver = (node: Node<Cell>) => {
     return node.value.id === maze.width * maze.height - 1;
   };

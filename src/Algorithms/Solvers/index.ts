@@ -5,4 +5,5 @@ const solvers = {
   "Breadth First": breadthFirst,
   "Depth First": depthFirst,
 };
+
 export default solvers;

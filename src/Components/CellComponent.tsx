@@ -12,6 +12,50 @@ interface CellProps {
   interval: number;
 }
 
+const axes = ["top", "right", "bottom", "left"];
+
+// Due to the overlapping caused by using 'border' css, box shadow provides flush styling for walls.
+const wallStylesGenerator = (cell: Cell) => {
+  // detructure the only necessary variable, neighbors
+  const { neighbors } = cell;
+
+  // configure the strings to be added depending on the status of the neighbor
+  const potentialWalls = [
+    "0 -1px 0 0 white", //up
+    "1px 0 0 0 white", // right
+    "0 1px 0 0 white", // down
+    "-1px 0 0 0 white", // left
+  ];
+
+  // if there is a neighbor at this axis add the a string to the array of the final result.
+  const wallWidthString = Object.values(neighbors).map((neighbor, index) => {
+    if (!!neighbor) {
+      return "0 0 0 0 white";
+    } else {
+      return potentialWalls[index];
+    }
+  });
+
+  // Join the result with a comma.
+  return wallWidthString.join(", ");
+};
+
+const styleGen = (
+  origin: "edge" | "center",
+  axis: string | boolean | undefined
+) => {
+  const styles = [];
+  if (origin === "center" && typeof axis === "string") {
+    const currentIndex = axes.indexOf(axis);
+    const opposite = axes[(currentIndex + 2) % 4];
+    styles.push(`${opposite}:0%`);
+    styles.push(`margin-${opposite}:50%`);
+  } else {
+    styles.push(`${axis}:0%`);
+  }
+  return styles.join("; ");
+};
+
 const Walls = styled("div")<{
   cell: Node;
 }>`
@@ -24,26 +68,10 @@ const Walls = styled("div")<{
   align-items: center;
 `;
 
-const vertices = ["top", "right", "bottom", "left"];
+//
 
-const styleGen = (
-  direction: "from" | "to",
-  vertex: string | boolean | undefined
-) => {
-  const styles = [];
-  if (direction === "to" && typeof vertex === "string") {
-    const currentIndex = vertices.indexOf(vertex);
-    const opposite = vertices[(currentIndex + 2) % 4];
-    styles.push(`${opposite}:0%`);
-    styles.push(`margin-${opposite}:50%`);
-  } else {
-    styles.push(`${vertex}:0%`);
-  }
-  return styles.join("; ");
-};
-
-const animateThis = (vertex: string | boolean | undefined) => {
-  return vertex === "top" || vertex === "bottom"
+const animatePathing = (axis: string | boolean | undefined) => {
+  return axis === "top" || axis === "bottom"
     ? keyframes` 
 0% {
   width: 3px;
@@ -64,73 +92,55 @@ const animateThis = (vertex: string | boolean | undefined) => {
 }`;
 };
 
-const animateCircle = (solutionIndex: number, status: any) => {
-  const statusColor = () => {
-    switch (status) {
-      case "queued":
-        return "rgba(00,255,0,1)";
-      case "touched":
-        return "rgba(00,00,255,1)";
-      case "exhausted":
-        return "rgba(255, 0, 0, 1)";
-      default:
-        return " #00000000";
-    }
-  };
+const statusColor = (status:) => {
+  switch (status) {
+    case "queued":
+      return "rgba(00,255,0,1)";
+    case "touched":
+      return "rgba(00,00,255,1)";
+    case "exhausted":
+      return "rgba(255, 0, 0, 1)";
+    default:
+      return " #00000000";
+  }
+};
 
+const transitionCircle = (solutionIndex: number, status: any) => {
   return solutionIndex > -1
     ? keyframes` 
 0% {
-  background-color: ${statusColor()}
+  background-color: ${statusColor(status)}
 }
 100% {
   background-color: pink;
 }`
     : keyframes` 
 0% {
-  background-color: ${statusColor()}
+  background-color: ${statusColor(status)}
 }
 100% {
-  background-color: ${statusColor()}
+  background-color: ${statusColor(status)}
 }`;
 };
 
-const From = styled("div")<{
-  from: string | boolean | undefined;
+const Path = styled("div")<{
+  origin: "center" | "edge";
+  axis: string | boolean | undefined;
   interval: number;
   solutionIndex: number;
 }>`
-  ${({ from }) => styleGen("from", from)};
+  ${({ axis, origin }) => styleGen(origin, axis)};
   position: absolute;
   background-color: pink;
-  -webkit-animation: ${({ from }) => animateThis(from)}
+  -webkit-animation: ${({ axis }) => animatePathing(axis)}
     ${({ interval }) => interval}s linear;
   -webkit-animation-fill-mode: forwards;
-  animation: ${({ from }) => animateThis(from)} ${({ interval }) => interval}s
-    linear 1;
+  animation: ${({ axis }) => animatePathing(axis)}
+    ${({ interval, axis }) => interval / (axis === "to" ? 2 : 1)}s linear 1;
   animation-fill-mode: forwards;
   z-index: -10;
-  animation-delay: ${({ interval, solutionIndex }) =>
-    interval * solutionIndex + 0.2}s;
-`;
-
-const To = styled("div")<{
-  to: string | boolean | undefined;
-  interval: number;
-  solutionIndex: number;
-}>`
-  ${({ to }) => styleGen("to", to)};
-  position: absolute;
-  background-color: pink;
-  -webkit-animation: ${({ to }) => animateThis(to)}
-    ${({ interval }) => interval}s linear;
-  -webkit-animation-fill-mode: forwards;
-  animation: ${({ to }) => animateThis(to)} ${({ interval }) => interval / 2}s
-    linear 1;
-  animation-fill-mode: forwards;
-  z-index: -10;
-  animation-delay: ${({ interval, solutionIndex }) =>
-    interval * solutionIndex + interval / 2 + 0.2}s;
+  animation-delay: ${({ interval, solutionIndex, axis }) =>
+    (interval * solutionIndex) / (axis === "to" ? 2 : 1) + 0.2}s;
 `;
 
 const Circle = styled("div")<{
@@ -143,50 +153,18 @@ const Circle = styled("div")<{
   width: 10px;
   padding: 5px;
   z-index: 10;
-  background-color: ${({ status }) => {
-    switch (status) {
-      case "queued":
-        return "rgba(00,255,0,1)";
-      case "touched":
-        return "rgba(00,00,255,1)";
-      case "exhausted":
-        return "rgba(255, 0, 0, 1)";
-      default:
-        return "#00000000";
-    }
-  }};
+  background-color: ${({ status }) => statusColor(status)}};
   -webkit-animation: ${({ solutionIndex, status }) =>
-      animateCircle(solutionIndex, status)}
+    transitionCircle(solutionIndex, status)}
     0s linear;
   -webkit-animation-fill-mode: forwards;
   animation: ${({ solutionIndex, status }) =>
-      animateCircle(solutionIndex, status)}
+    transitionCircle(solutionIndex, status)}
     0s linear 1;
   animation-fill-mode: forwards;
   animation-delay: ${({ interval, solutionIndex }) =>
     interval * solutionIndex + interval / 2 + 0.2}s;
 `;
-
-const wallStylesGenerator = (cell: Cell) => {
-  const { neighbors } = cell;
-
-  const potentialWalls = [
-    "0 -1px 0 0 white", //up
-    "1px 0 0 0 white",
-    "0 1px 0 0 white",
-    "-1px 0 0 0 white",
-  ];
-
-  const wallWidthString = Object.values(neighbors).map((neighbor, index) => {
-    if (!!neighbor) {
-      return "0 0 0 0 white";
-    } else {
-      return potentialWalls[index];
-    }
-  });
-
-  return wallWidthString.join(", ");
-};
 
 const CellComponent = ({
   cell,
@@ -199,15 +177,17 @@ const CellComponent = ({
   return (
     <Walls cell={cell}>
       {!!from && (
-        <From
-          from={from}
+        <Path
+          origin={"edge"}
+          axis={from}
           interval={interval}
           solutionIndex={typeof solutionIndex === "number" ? solutionIndex : -1}
         />
       )}
       {!!to && (
-        <To
-          to={to}
+        <Path
+          origin={"center"}
+          axis={to}
           interval={interval}
           solutionIndex={typeof solutionIndex === "number" ? solutionIndex : -1}
         />
@@ -221,6 +201,7 @@ const CellComponent = ({
   );
 };
 
+// As the cell is a reference value that can potentially change with each render a memoised version of this coomponent will conditionally render based on the result of the following calculation.
 export default memo(
   CellComponent,
   (
@@ -228,15 +209,15 @@ export default memo(
       cell: oldCell,
       status: oldStatus,
       solutionIndex: oldSI,
-      from: oldFrom,
-      to: oldTo,
+      from: oldPath,
+      to: oldToLine,
     }: Readonly<CellProps>,
     {
       cell: newCell,
       status: newStatus,
       solutionIndex: newSI,
-      from: newFrom,
-      to: newTo,
+      from: newPath,
+      to: newToLine,
     }: Readonly<CellProps>
   ) => {
     const oldNeighbors = () =>
@@ -251,8 +232,8 @@ export default memo(
     return (
       JSON.stringify(oldNeighbors()) === JSON.stringify(newNeighbors()) &&
       oldStatus === newStatus &&
-      oldFrom === newFrom &&
-      oldTo === newTo
+      oldPath === newPath &&
+      oldToLine === newToLine
     );
   }
 );

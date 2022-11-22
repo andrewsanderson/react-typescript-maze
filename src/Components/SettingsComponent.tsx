@@ -1,5 +1,5 @@
 import styled, { keyframes } from "styled-components";
-import { settings } from "../MazeComponent";
+import { settings } from "./MazeComponent";
 import {
   Button,
   Slider,
@@ -11,18 +11,10 @@ import {
   Switch,
 } from "@mui/material";
 import SyncIcon from "@mui/icons-material/Sync";
-import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
+import ClearIcon from "@mui/icons-material/Clear";
 
-import generators from "../../Algorithms/Generators";
-import solvers from "../../Algorithms/Solvers";
-
-// const Icon = () => {
-//   return (
-//     <RotatingIcon>
-//       <SettingsIcon style={{ backgroundColor: "red", borderRadius: "50%" width:'100%' height:'100' }} />
-//     </RotatingIcon>
-//   );
-// };
+import generators from "../Algorithms/Generators";
+import solvers from "../Algorithms/Solvers";
 
 const rotation = keyframes`{
   from {
@@ -35,13 +27,15 @@ const rotation = keyframes`{
 
 const RotatingIcon = styled(SyncIcon)`
   animation: ${rotation} 2s infinite linear;
-  background-color: blue;
+  background-color: #90caf9;
   border-radius: 50%;
+  color: white;
 `;
 
-const DefaultIcon = styled(HelpOutlineIcon)`
-  background-color: blue;
+const DefaultIcon = styled(ClearIcon)`
+  background-color: #90caf9;
   border-radius: 50%;
+  color: white;
 `;
 
 const Container = styled("div")`
@@ -65,7 +59,6 @@ interface SettingsProps {
 const Settings = ({ settingsState, setSettingsState }: SettingsProps) => {
   const { height, width, solver, generator, solve } = settingsState;
 
-  console.log(solve);
   const handleDimensionChange = (e: Event) => {
     const { value, name } = e.target as HTMLInputElement;
     setSettingsState({ ...settingsState, [name]: value });
@@ -75,10 +68,6 @@ const Settings = ({ settingsState, setSettingsState }: SettingsProps) => {
     const { value, name } = e.target as HTMLInputElement;
     setSettingsState({ ...settingsState, [name]: value });
   };
-
-  // const handleSolveClick = () => {
-  //   solve();
-  // };
 
   return (
     <Container>

@@ -19,6 +19,7 @@ import Graph from "../../Models/Maze/Graph";
  * @param maze the maze that is to be generated using this method.
  * @returns the cells of the maze are mutated within the function so no return is necessary but the maze is returned in case the functionality needs adapting.
  */
+
 const kruskals = (maze: Graph) => {
   // Create a set from each of the cells.
   const cellSets = maze.cells.map((cell) => {

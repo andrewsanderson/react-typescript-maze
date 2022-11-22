@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 import Graph from "../Models/Maze/Graph";
-import Settings from "./Settings/Settings";
+import Settings from "./SettingsComponent";
 import common from "@mui/material/colors/common";
 import Node from "../Models/Pathing/Node";
 import Cell from "../Models/Maze/Cell";
@@ -102,8 +102,12 @@ const MazeComponent = () => {
       return false;
     };
 
-    // if height, width, or generator has changed
-    if (hasChanged("height", "width", "generator")) {
+    if (prevSettings === undefined) {
+      // if just the solver changes set a new tree from the solver.
+      tree = solvers[solver](mazeState);
+      // reasign the treeGenerator variable with the generator of the new tree
+      treeGenerator = tree.generator();
+    } else if (hasChanged("height", "width", "generator")) {
       // generate a new maze with the given generator
       const newMaze = new Graph({ height, width });
 
@@ -164,25 +168,12 @@ const MazeComponent = () => {
     mazeState,
     nodesState,
     solve,
+    interval,
   ]);
-
-  const onClick = () => {
-    const val = treeGenerator.next().value;
-    if (val !== undefined) {
-      setNodesState(val);
-    } else {
-      setSolutionState(tree.solution);
-    }
-  };
 
   return (
     <Wrapper>
       <MazeContainer>
-        <Button onClick={onClick}>
-          <LoopIcon />
-          <PlayArrowIcon />
-        </Button>
-
         <MazeBorder>
           {[...Array(mazeState.height).keys()].map((yVal) => {
             return (
