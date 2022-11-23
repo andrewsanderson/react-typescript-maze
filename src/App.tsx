@@ -7,7 +7,7 @@ import { darken } from "@mui/material/styles";
 import KeyComponent from "./Components/KeyComponent";
 
 const AppContainer = styled("div")`
-  background-color: ${darken(purple[900], 0.5)};
+  background-color: ${darken(purple[900], 0.3)};
   position: fixed;
   top: 0;
   left: 0;

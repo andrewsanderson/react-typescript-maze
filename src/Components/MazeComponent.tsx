@@ -13,6 +13,7 @@ import LoopIcon from "@mui/icons-material/Loop";
 import PlayArrowIcon from "@mui/icons-material/PlayArrow";
 import Tree from "../Models/Pathing/Tree";
 import KeyComponent from "./KeyComponent";
+import manual from "../Algorithms/Generators/manual";
 
 function timeout(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms));
@@ -81,8 +82,12 @@ const MazeComponent = () => {
   const interval = 10 / (height * width);
 
   const [mazeState, setMazeState] = useState<Graph>(
-    generators[generator](new Graph({ height, width }))
+    generator !== "Manual"
+      ? generators[generator](new Graph({ height, width }))
+      : new Graph({ height, width })
   );
+
+  const [manualPath, setManualPath] = useState<Array<Cell>>([]);
 
   const [solutionState, setSolutionState] = useState<Array<Node<Cell>>>();
 
@@ -103,6 +108,17 @@ const MazeComponent = () => {
       return false;
     };
 
+    if (manualPath.length === 2) {
+      const newM = new Graph(settingsState, mazeState.cells);
+      const newState = generators[generator](
+        newM,
+        manualPath[0],
+        manualPath[1]
+      );
+      setMazeState(newState);
+      setManualPath([]);
+    }
+
     if (prevSettings === undefined) {
       // if just the solver changes set a new tree from the solver.
       tree = solvers[solver](mazeState);
@@ -112,8 +128,11 @@ const MazeComponent = () => {
       // generate a new maze with the given generator
       const newMaze = new Graph({ height, width });
 
-      // set it in staate
-      setMazeState(generators[generator](newMaze));
+      if (generator !== "Manual") {
+        setMazeState(generators[generator](newMaze));
+      } else {
+        setMazeState(newMaze);
+      }
 
       // generate a new tree for use with the new maze.
       tree = solvers[solver](newMaze);
@@ -127,6 +146,8 @@ const MazeComponent = () => {
       tree = solvers[solver](mazeState);
       // reasign the treeGenerator variable with the generator of the new tree
       treeGenerator = tree.generator();
+      setSolutionState(undefined);
+      setNodesState(undefined);
     } else if (solve) {
       if (tree !== undefined) {
         const thing = async () => {
@@ -170,13 +191,23 @@ const MazeComponent = () => {
     nodesState,
     solve,
     interval,
+    manualPath,
   ]);
+
+  const handleCellClick = (cell: Cell) => {
+    const newPath = [...manualPath];
+    newPath.push(cell);
+    setManualPath(newPath);
+  };
+
+  console.log("ac", mazeState);
 
   return (
     <Wrapper>
       <MazeContainer>
         <MazeBorder>
           {[...Array(mazeState.height).keys()].map((yVal) => {
+            console.log("rerender", mazeState);
             return (
               <Row key={yVal}>
                 {mazeState.cells
@@ -211,22 +242,31 @@ const MazeComponent = () => {
                         solutionState[solutionIndex + 1]?.value
                       );
 
+                    const manual = settingsState.generator === "Manual";
+
                     return (
-                      <CellComponent
-                        key={cell.id}
-                        cell={cell}
-                        status={status}
-                        solutionIndex={solutionIndex}
-                        from={from}
-                        to={to}
-                        interval={interval}
-                      />
+                      <div
+                        key={cell.cellString}
+                        onClick={() => handleCellClick(cell)}
+                      >
+                        <CellComponent
+                          key={cell.id}
+                          cell={cell}
+                          status={status}
+                          solutionIndex={solutionIndex}
+                          from={from}
+                          to={to}
+                          interval={interval}
+                          manual={manual}
+                        />
+                      </div>
                     );
                   })}
               </Row>
             );
           })}
         </MazeBorder>
+
         <KeyComponent />
       </MazeContainer>
       <Settings

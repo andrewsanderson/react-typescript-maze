@@ -10,10 +10,10 @@ class Graph {
   height = 0;
   cells: Array<Cell> = [];
 
-  constructor(config: Config) {
+  constructor(config: Config, cells?: Array<Cell>) {
     this.width = config.width;
     this.height = config.height;
-    this.initialise();
+    !!cells ? (this.cells = cells) : this.initialise();
   }
 
   getRandomCell() {

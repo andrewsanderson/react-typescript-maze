@@ -67,6 +67,18 @@ class Cell {
     return { x, y };
   }
 
+  get cellString() {
+    return (
+      this.id +
+      ":" +
+      JSON.stringify(
+        Object.values(this.neighbors).map((node) => {
+          return node?.id;
+        })
+      )
+    );
+  }
+
   /**
    *
    * @param cell the cell we're looking to discern the direction of, when compared to the current cell.

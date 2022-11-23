@@ -10,6 +10,7 @@ interface CellProps {
   from: string | boolean | undefined;
   to: string | boolean | undefined;
   interval: number;
+  manual: boolean;
 }
 
 const axes = ["top", "right", "bottom", "left"];
@@ -58,6 +59,7 @@ const styleGen = (
 
 const Walls = styled("div")<{
   cell: Node;
+  manual: boolean;
 }>`
   width: 20px;
   height: 20px;
@@ -66,6 +68,12 @@ const Walls = styled("div")<{
   display: flex;
   justify-content: center;
   align-items: center;
+  ${({ manual }) =>
+    manual &&
+    `:hover {
+    background-color: yellow;
+    cursor:pointer;
+  }`}
 `;
 
 //
@@ -101,7 +109,7 @@ const statusColor = (status: any) => {
     case "exhausted":
       return "rgba(255, 0, 0, 1)";
     default:
-      return " #00000000";
+      return "pink";
   }
 };
 
@@ -112,7 +120,7 @@ const transitionCircle = (solutionIndex: number, status: any) => {
   background-color: ${statusColor(status)}
 }
 100% {
-  background-color: pink;
+  background-color: ${statusColor(undefined)};
 }`
     : keyframes` 
 0% {
@@ -173,9 +181,20 @@ const CellComponent = ({
   solutionIndex,
   from,
   to,
+  manual,
 }: CellProps) => {
+  // onClick set the startNode to this id
+  // clear the end node
+
+  // on hover set end node
+  // allow for preview
+
+  // on mouseup make path between
+
+  console.log(cell.id);
+
   return (
-    <Walls cell={cell}>
+    <Walls cell={cell} manual={manual}>
       {!!from && (
         <Path
           origin={"edge"}
@@ -192,11 +211,13 @@ const CellComponent = ({
           solutionIndex={typeof solutionIndex === "number" ? solutionIndex : -1}
         />
       )}
-      <Circle
-        interval={interval}
-        status={status}
-        solutionIndex={typeof solutionIndex === "number" ? solutionIndex : -1}
-      />
+      {!!status && (
+        <Circle
+          interval={interval}
+          status={status}
+          solutionIndex={typeof solutionIndex === "number" ? solutionIndex : -1}
+        />
+      )}
     </Walls>
   );
 };
@@ -228,7 +249,6 @@ export default memo(
       Object.values(newCell.neighbors).map((node) => {
         return node?.id;
       });
-
     return (
       JSON.stringify(oldNeighbors()) === JSON.stringify(newNeighbors()) &&
       oldStatus === newStatus &&

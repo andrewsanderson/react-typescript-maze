@@ -1,6 +1,7 @@
 import Cell from "../../Models/Maze/Cell";
 import Graph from "../../Models/Maze/Graph";
 import kruskals from "./kruskal";
+import manual from "./manual";
 import modifiedPrims from "./modifiedPrims";
 import randomisedDepthFirst from "./randomisedDepthFirst";
 
@@ -56,6 +57,7 @@ export const randomNumber = (max: number) => {
 };
 
 const generators = {
+  Manual: manual,
   "Randomised Depth First": randomisedDepthFirst,
   "Randomised Kruskals": kruskals,
   "Randomised Modified Prims": modifiedPrims,
