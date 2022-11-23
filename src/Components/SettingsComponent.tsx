@@ -57,7 +57,9 @@ const SliderWrapper = styled("div")`
   }
 `;
 
-const FormSection = styled("div")``;
+const FormSection = styled("div")`
+  width: 350px;
+`;
 
 interface SettingsProps {
   settingsState: settings;
@@ -93,46 +95,42 @@ const Settings = ({ settingsState, setSettingsState }: SettingsProps) => {
         </Typography>
 
         <SliderWrapper>
-          <div style={{ display: "flex", padding: "20px" }}>
-            {/* Width */}
-            <Typography
-              id="input-slider"
-              gutterBottom
-              sx={{ padding: "0 10px 0 10px" }}
-            >
-              Width
-            </Typography>
-            <Slider
-              aria-label="Volume"
-              value={width}
-              name="width"
-              step={1}
-              min={2}
-              max={15}
-              valueLabelDisplay="auto"
-              onChange={handleDimensionChange}
-            />
-          </div>
-          <div style={{ display: "flex", padding: "20px" }}>
-            {/* Height */}
-            <Typography
-              id="input-slider"
-              gutterBottom
-              sx={{ padding: "0 10px 0 10px" }}
-            >
-              Height
-            </Typography>
-            <Slider
-              aria-label="Volume"
-              value={height}
-              name="height"
-              step={1}
-              min={2}
-              max={15}
-              valueLabelDisplay="auto"
-              onChange={handleDimensionChange}
-            />
-          </div>
+          {/* Width */}
+          <Typography
+            id="input-slider"
+            gutterBottom
+            sx={{ padding: "0 10px 0 10px" }}
+          >
+            Width
+          </Typography>
+          <Slider
+            aria-label="Volume"
+            value={width}
+            name="width"
+            step={1}
+            min={2}
+            max={15}
+            valueLabelDisplay="auto"
+            onChange={handleDimensionChange}
+          />
+          {/* Height */}
+          <Typography
+            id="input-slider"
+            gutterBottom
+            sx={{ padding: "0 10px 0 10px" }}
+          >
+            Height
+          </Typography>
+          <Slider
+            aria-label="Volume"
+            value={height}
+            name="height"
+            step={1}
+            min={2}
+            max={15}
+            valueLabelDisplay="auto"
+            onChange={handleDimensionChange}
+          />
         </SliderWrapper>
       </FormSection>
       <DropDownWrapper>
