@@ -72,8 +72,16 @@ const Settings = ({ settingsState, setSettingsState }: SettingsProps) => {
   return (
     <Container>
       <FormSection>
-        <Typography id="maze-settings-header" variant="h4">
-          Maze Settings
+        <Typography
+          id="maze-settings-header"
+          variant="h4"
+          style={{
+            textAlign: "center",
+            fontWeight: "900",
+            paddingBottom: "25px",
+          }}
+        >
+          MAZE SETTINGS
         </Typography>
 
         <div style={{ padding: "10px", display: "flex", width: "500px" }}>
@@ -99,7 +107,7 @@ const Settings = ({ settingsState, setSettingsState }: SettingsProps) => {
           <Typography
             id="input-slider"
             gutterBottom
-            sx={{ padding: "0 10px 0 10px" }}
+            sx={{ padding: "0 10px 0 20px" }}
           >
             Height
           </Typography>
@@ -166,9 +174,10 @@ const Settings = ({ settingsState, setSettingsState }: SettingsProps) => {
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
+            fontWeight: "600",
           }}
         >
-          Solve?
+          Solve
           <Switch
             icon={<DefaultIcon />}
             checkedIcon={<RotatingIcon />}

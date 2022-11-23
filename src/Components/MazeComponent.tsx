@@ -151,7 +151,6 @@ const MazeComponent = () => {
     } else if (solve) {
       if (tree !== undefined) {
         const thing = async () => {
-          await timeout(interval * 1000);
           // If there is more than a single 'path' we'll progress them all so we can effectively illustrate tree progression.
           if (tree.paths.length > 1) {
             let endValue;
@@ -200,14 +199,11 @@ const MazeComponent = () => {
     setManualPath(newPath);
   };
 
-  console.log("ac", mazeState);
-
   return (
     <Wrapper>
       <MazeContainer>
         <MazeBorder>
           {[...Array(mazeState.height).keys()].map((yVal) => {
-            console.log("rerender", mazeState);
             return (
               <Row key={yVal}>
                 {mazeState.cells

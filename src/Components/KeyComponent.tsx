@@ -4,12 +4,14 @@ import { Circle } from "./CellComponent";
 const Wrapper = styled("div")`
   display: flex;
   align-items: center;
-  padding: 10px;
+  padding: 10px 10px;
   background-color: rgba(0, 0, 0, 0.3);
   margin: 20px;
+  padding-right: 40px;
 `;
 
 const Label = styled("div")`
+  padding-left: 20px;
   margin: 10px;
 `;
 
@@ -22,7 +24,7 @@ const KeyComponent = () => {
       <Circle solutionIndex={-1} status="touched" interval={0} />
       <Label> Queued:</Label>
       <Circle solutionIndex={-1} status="queued" interval={0} />
-      <Label> In Solution:</Label>
+      <Label> Solution:</Label>
       <Circle solutionIndex={-1} status={undefined} interval={0} />
     </Wrapper>
   );

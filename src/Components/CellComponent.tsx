@@ -191,8 +191,6 @@ const CellComponent = ({
 
   // on mouseup make path between
 
-  console.log(cell.id);
-
   return (
     <Walls cell={cell} manual={manual}>
       {!!from && (
