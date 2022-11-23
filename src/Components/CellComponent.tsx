@@ -1,7 +1,7 @@
 import { memo } from "react";
 import styled, { keyframes } from "styled-components";
 import Cell from "../Models/Maze/Cell";
-import Node, { Neighbors } from "../Models/Maze/Cell";
+import Node from "../Models/Maze/Cell";
 
 interface CellProps {
   cell: Node;
@@ -11,6 +11,7 @@ interface CellProps {
   to: string | boolean | undefined;
   interval: number;
   manual: boolean;
+  isInManual: boolean;
 }
 
 const axes = ["top", "right", "bottom", "left"];
@@ -60,6 +61,7 @@ const styleGen = (
 const Walls = styled("div")<{
   cell: Node;
   manual: boolean;
+  isInManual: boolean;
 }>`
   width: 20px;
   height: 20px;
@@ -71,9 +73,10 @@ const Walls = styled("div")<{
   ${({ manual }) =>
     manual &&
     `:hover {
-    background-color: yellow;
+    background-color: green;
     cursor:pointer;
   }`}
+  background-color:${({ isInManual }) => (isInManual ? "green" : "#00000000")};
 `;
 
 //
@@ -182,17 +185,10 @@ const CellComponent = ({
   from,
   to,
   manual,
+  isInManual,
 }: CellProps) => {
-  // onClick set the startNode to this id
-  // clear the end node
-
-  // on hover set end node
-  // allow for preview
-
-  // on mouseup make path between
-
   return (
-    <Walls cell={cell} manual={manual}>
+    <Walls cell={cell} manual={manual} isInManual={isInManual}>
       {!!from && (
         <Path
           origin={"edge"}
@@ -230,6 +226,7 @@ export default memo(
       solutionIndex: oldSI,
       from: oldPath,
       to: oldToLine,
+      isInManual: oldIsInManual,
     }: Readonly<CellProps>,
     {
       cell: newCell,
@@ -237,6 +234,7 @@ export default memo(
       solutionIndex: newSI,
       from: newPath,
       to: newToLine,
+      isInManual: newIsInManual,
     }: Readonly<CellProps>
   ) => {
     const oldNeighbors = () =>
@@ -251,7 +249,8 @@ export default memo(
       JSON.stringify(oldNeighbors()) === JSON.stringify(newNeighbors()) &&
       oldStatus === newStatus &&
       oldPath === newPath &&
-      oldToLine === newToLine
+      oldToLine === newToLine &&
+      oldIsInManual === newIsInManual
     );
   }
 );

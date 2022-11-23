@@ -13,6 +13,9 @@ const AppContainer = styled("div")`
   left: 0;
   bottom: 0;
   right: 0;
+  @media (max-width: 1150px) {
+    overflow-y: scroll;
+  }
 `;
 
 function App() {

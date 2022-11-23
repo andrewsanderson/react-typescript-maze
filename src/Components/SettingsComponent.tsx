@@ -49,6 +49,14 @@ const DropDownWrapper = styled("div")`
   padding: 20px;
 `;
 
+const SliderWrapper = styled("div")`
+  display: flex;
+
+  @media (max-width: 1150px) {
+    flex-direction: column;
+  }
+`;
+
 const FormSection = styled("div")``;
 
 interface SettingsProps {
@@ -84,44 +92,48 @@ const Settings = ({ settingsState, setSettingsState }: SettingsProps) => {
           MAZE SETTINGS
         </Typography>
 
-        <div style={{ padding: "10px", display: "flex", width: "500px" }}>
-          {/* Width */}
-          <Typography
-            id="input-slider"
-            gutterBottom
-            sx={{ padding: "0 10px 0 10px" }}
-          >
-            Width
-          </Typography>
-          <Slider
-            aria-label="Volume"
-            value={width}
-            name="width"
-            step={1}
-            min={2}
-            max={15}
-            valueLabelDisplay="auto"
-            onChange={handleDimensionChange}
-          />
-          {/* Height */}
-          <Typography
-            id="input-slider"
-            gutterBottom
-            sx={{ padding: "0 10px 0 20px" }}
-          >
-            Height
-          </Typography>
-          <Slider
-            aria-label="Volume"
-            value={height}
-            name="height"
-            step={1}
-            min={2}
-            max={15}
-            valueLabelDisplay="auto"
-            onChange={handleDimensionChange}
-          />
-        </div>
+        <SliderWrapper>
+          <div style={{ display: "flex", padding: "20px" }}>
+            {/* Width */}
+            <Typography
+              id="input-slider"
+              gutterBottom
+              sx={{ padding: "0 10px 0 10px" }}
+            >
+              Width
+            </Typography>
+            <Slider
+              aria-label="Volume"
+              value={width}
+              name="width"
+              step={1}
+              min={2}
+              max={15}
+              valueLabelDisplay="auto"
+              onChange={handleDimensionChange}
+            />
+          </div>
+          <div style={{ display: "flex", padding: "20px" }}>
+            {/* Height */}
+            <Typography
+              id="input-slider"
+              gutterBottom
+              sx={{ padding: "0 10px 0 10px" }}
+            >
+              Height
+            </Typography>
+            <Slider
+              aria-label="Volume"
+              value={height}
+              name="height"
+              step={1}
+              min={2}
+              max={15}
+              valueLabelDisplay="auto"
+              onChange={handleDimensionChange}
+            />
+          </div>
+        </SliderWrapper>
       </FormSection>
       <DropDownWrapper>
         <FormControl fullWidth>

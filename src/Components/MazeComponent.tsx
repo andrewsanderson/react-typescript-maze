@@ -55,6 +55,10 @@ const Wrapper = styled("div")`
   height: 100%;
   padding-left: 10%;
   padding-right: 10%;
+  @media (max-width: 1150px) {
+    flex-direction: column;
+    padding-top: 300px;
+  }
 `;
 
 const MazeContainer = styled("div")`
@@ -152,28 +156,15 @@ const MazeComponent = () => {
       if (tree !== undefined) {
         const thing = async () => {
           // If there is more than a single 'path' we'll progress them all so we can effectively illustrate tree progression.
-          if (tree.paths.length > 1) {
-            let endValue;
-            for (const next of tree.paths) {
-              const nextVal = treeGenerator.next().value;
-              if (nextVal === undefined) {
-                setSettingsState({ ...settingsState, solve: false });
-                setSolutionState(tree.solution);
-              } else endValue = nextVal;
-            }
-            if (endValue !== undefined) {
-              setNodesState(endValue);
-            }
-          }
+
           // Otherwise simply progress to the next node
-          else {
-            const nextVal = treeGenerator.next().value;
-            if (nextVal === undefined) {
-              setSettingsState({ ...settingsState, solve: false });
-              setSolutionState(tree.solution);
-            } else {
-              setNodesState(nextVal);
-            }
+
+          const nextVal = treeGenerator.next().value;
+          if (nextVal === undefined) {
+            setSettingsState({ ...settingsState, solve: false });
+            setSolutionState(tree.solution);
+          } else {
+            setNodesState(nextVal);
           }
         };
         thing();
@@ -240,6 +231,8 @@ const MazeComponent = () => {
 
                     const manual = settingsState.generator === "Manual";
 
+                    const isInManual = manualPath.includes(cell);
+
                     return (
                       <div
                         key={cell.cellString}
@@ -254,6 +247,7 @@ const MazeComponent = () => {
                           to={to}
                           interval={interval}
                           manual={manual}
+                          isInManual={isInManual}
                         />
                       </div>
                     );
