@@ -96,11 +96,7 @@ const Settings = ({ settingsState, setSettingsState }: SettingsProps) => {
 
         <SliderWrapper>
           {/* Width */}
-          <Typography
-            id="input-slider"
-            gutterBottom
-            sx={{ padding: "0 10px 0 10px" }}
-          >
+          <Typography id="input-slider" gutterBottom sx={{ padding: "0 20px" }}>
             Width
           </Typography>
           <Slider
@@ -112,13 +108,10 @@ const Settings = ({ settingsState, setSettingsState }: SettingsProps) => {
             max={15}
             valueLabelDisplay="auto"
             onChange={handleDimensionChange}
+            sx={{ paddingRight: "0 10px 0 10px" }}
           />
           {/* Height */}
-          <Typography
-            id="input-slider"
-            gutterBottom
-            sx={{ padding: "0 10px 0 10px" }}
-          >
+          <Typography id="input-slider" gutterBottom sx={{ padding: "0 20px" }}>
             Height
           </Typography>
           <Slider

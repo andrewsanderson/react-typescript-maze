@@ -5,7 +5,7 @@ import Node from "../../Models/Pathing/Node";
 
 /**
  *
- * @param maze the maze to be solved using breadth first pathfinding.
+ * @param maze the maze to be solved using an informed algorithm that prioritises cells via a Manhattan distance calculator.
  * @returns a tree of nodes. The generator of which will return all nodes in the tree, in order to globally updates statuses.
  */
 const aStarManhattan = (maze: Maze) => {

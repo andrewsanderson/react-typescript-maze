@@ -14,6 +14,7 @@ interface CellProps {
   isInManual: boolean;
 }
 
+// This reference is used to calculate opposing axes.
 const axes = ["top", "right", "bottom", "left"];
 
 // Due to the overlapping caused by using 'border' css, box shadow provides flush styling for walls.
@@ -42,7 +43,7 @@ const wallStylesGenerator = (cell: Cell) => {
   return wallWidthString.join(", ");
 };
 
-const styleGen = (
+const pathingStylesGenerator = (
   origin: "edge" | "center",
   axis: string | boolean | undefined
 ) => {
@@ -65,7 +66,7 @@ const Walls = styled("div")<{
 }>`
   width: 20px;
   height: 20px;
-  box-shadow: ${({ cell }) => wallStylesGenerator(cell)};
+
   position: relative;
   display: flex;
   justify-content: center;
@@ -76,12 +77,13 @@ const Walls = styled("div")<{
     background-color: green;
     cursor:pointer;
   }`}
-  background-color:${({ isInManual }) => (isInManual ? "green" : "#00000000")};
+  box-shadow: ${({ cell }) => wallStylesGenerator(cell)};
+  background-color: ${({ isInManual }) => (isInManual ? "green" : "#00000000")};
 `;
 
 //
 
-const animatePathing = (axis: string | boolean | undefined) => {
+const animatePathingKeyframes = (axis: string | boolean | undefined) => {
   return axis === "top" || axis === "bottom"
     ? keyframes` 
 0% {
@@ -140,13 +142,13 @@ const Path = styled("div")<{
   interval: number;
   solutionIndex: number;
 }>`
-  ${({ axis, origin }) => styleGen(origin, axis)};
+  ${({ axis, origin }) => pathingStylesGenerator(origin, axis)};
   position: absolute;
   background-color: pink;
-  -webkit-animation: ${({ axis }) => animatePathing(axis)}
+  -webkit-animation: ${({ axis }) => animatePathingKeyframes(axis)}
     ${({ interval }) => interval}s linear;
   -webkit-animation-fill-mode: forwards;
-  animation: ${({ axis }) => animatePathing(axis)}
+  animation: ${({ axis }) => animatePathingKeyframes(axis)}
     ${({ interval, axis }) => interval / (axis === "to" ? 2 : 1)}s linear 1;
   animation-fill-mode: forwards;
   z-index: -10;

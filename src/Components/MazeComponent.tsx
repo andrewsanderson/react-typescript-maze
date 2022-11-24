@@ -56,7 +56,7 @@ const Wrapper = styled("div")`
   padding-left: 10%;
   padding-right: 10%;
   @media (max-width: 1150px) {
-    flex-direction: column;
+    flex-direction: column-reverse;
     padding-top: 300px;
   }
 `;
