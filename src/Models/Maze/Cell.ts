@@ -31,16 +31,9 @@ class Cell {
    * @returns the inverse of the provided 'direction' parameter, as a string.
    */
   inverseDirection(direction: keyof Neighbors): keyof Neighbors {
-    switch (direction) {
-      case "top":
-        return "bottom";
-      case "right":
-        return "left";
-      case "bottom":
-        return "top";
-      case "left":
-        return "right";
-    }
+    const directions = ["top", "right", "bottom", "left"];
+    const currentDirectionIndex = directions.indexOf(direction);
+    return directions[(currentDirectionIndex + 2) % 4] as keyof Neighbors;
   }
 
   /**
@@ -84,28 +77,32 @@ class Cell {
    * @param cell the cell we're looking to discern the direction of, when compared to the current cell.
    * @returns the direction of the stopplied cell if it is neighboring the current cell, otherwise it will log the error.
    */
-  getCellDirection(cell: Cell) {
-    const xdif = this.coordinates.x - cell.coordinates.x;
-    const ydif = this.coordinates.y - cell.coordinates.y;
+  getCellDirection(cell: Cell | null) {
+    if (cell !== null) {
+      const xdif = this.coordinates.x - cell.coordinates.x;
+      const ydif = this.coordinates.y - cell.coordinates.y;
 
-    // Switch case hell, fix some how
-    if (xdif > 1 || ydif > 1) {
-      console.log("OOB non-neighbor");
-    } else {
-      switch ([xdif, ydif].toString()) {
-        // top
-        case [0, 1].toString():
-          return "top";
-        // right
-        case [-1, 0].toString():
-          return "right";
-        // bottom
-        case [0, -1].toString():
-          return "bottom";
-        // left
-        case [1, 0].toString():
-          return "left";
+      // Switch case hell, fix some how
+      if (xdif > 1 || ydif > 1) {
+        console.log("OOB non-neighbor");
+      } else {
+        switch ([xdif, ydif].toString()) {
+          // top
+          case [0, 1].toString():
+            return "top";
+          // right
+          case [-1, 0].toString():
+            return "right";
+          // bottom
+          case [0, -1].toString():
+            return "bottom";
+          // left
+          case [1, 0].toString():
+            return "left";
+        }
       }
+    } else {
+      return undefined;
     }
   }
 

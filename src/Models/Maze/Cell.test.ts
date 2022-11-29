@@ -52,11 +52,26 @@ describe("Cell", () => {
     }
   );
 
-  const getCellDirection = Object.keys(testCell.neighbors).map((direction) => {
-    const neighborCell = testGraph.peekNeighbor(
-      testCell,
-      direction as keyof Neighbors
-    );
-    return [neighborCell?.coordinates, direction];
+  const expectedGetCellDirectionResults = Object.keys(testCell.neighbors).map(
+    (direction) => {
+      const neighborCell = testGraph.peekNeighbor(
+        testCell,
+        direction as keyof Neighbors
+      );
+      return [neighborCell, direction];
+    }
+  );
+
+  test.each(expectedGetCellDirectionResults)(
+    "when getCellDirection() is given %p cell, returns %p",
+    (neighborCell, expectedResult) => {
+      expect(testCell.getCellDirection(neighborCell as Cell)).toEqual(
+        expectedResult
+      );
+    }
+  );
+
+  test("inverseDirection", () => {
+    expect(testCell.inverseDirection("top")).toEqual("bottom");
   });
 });

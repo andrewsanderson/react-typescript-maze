@@ -13,7 +13,7 @@ class Graph {
   constructor(config: Config, cells?: Array<Cell>) {
     this.width = config.width;
     this.height = config.height;
-    !!cells ? (this.cells = cells) : this.initialise();
+    !!cells ? (this.cells = cells) : this.#initialise();
   }
 
   getRandomCell() {
@@ -41,7 +41,7 @@ class Graph {
   /**
    * Build the cells for this Maze's configuration
    */
-  initialise() {
+  #initialise() {
     let id = 0;
     for (const y of [...Array(this.height).keys()]) {
       for (const x of [...Array(this.width).keys()]) {
