@@ -88,6 +88,7 @@ class Cell {
     const xdif = this.coordinates.x - cell.coordinates.x;
     const ydif = this.coordinates.y - cell.coordinates.y;
 
+    // Switch case hell, fix some how
     if (xdif > 1 || ydif > 1) {
       console.log("OOB non-neighbor");
     } else {
