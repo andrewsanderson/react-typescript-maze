@@ -97,18 +97,18 @@ class Tree<NodeType> {
   /**
    * The method used to acquire children when provided the context of the current node.
    */
-  getChildren: GetChildren<NodeType>;
+  #getChildren: GetChildren<NodeType>;
 
   /**
    * How children acquired from the current node context will be inserted into the stack.
    * Mutate the node at this stage if necessary
    */
-  insertChildren: InsertChildren<NodeType>;
+  #insertChildren: InsertChildren<NodeType>;
 
   /**
    * Method used to identify if the current node is the 'solution' to the tree.
    */
-  solutionFinder?: SolutionFinder<NodeType>;
+  #solutionFinder?: SolutionFinder<NodeType>;
 
   /**
    * An array containing the path to the solution. The end node (solution) will come first.
@@ -123,9 +123,9 @@ class Tree<NodeType> {
   ) {
     const rootNode: Node<NodeType> = new Node(rootValue);
     this.stack = new Stack(rootNode);
-    this.getChildren = getChildren;
-    this.insertChildren = insertChildren;
-    this.solutionFinder = solutionFinder;
+    this.#getChildren = getChildren;
+    this.#insertChildren = insertChildren;
+    this.#solutionFinder = solutionFinder;
   }
 
   /**
@@ -134,14 +134,14 @@ class Tree<NodeType> {
   *generator() {
     for (const currentNode of this.stack) {
       // If the current node is the solution, push the solution up.
-      if (!!this.solutionFinder && this.solutionFinder(currentNode)) {
+      if (!!this.#solutionFinder && this.#solutionFinder(currentNode)) {
         this.solution = currentNode.path;
         this.status = "solved";
         return;
       }
 
       // Get children of the current node.
-      const children = this.getChildren(currentNode);
+      const children = this.#getChildren(currentNode);
 
       // Filter out children that are already in the queue. Create Nodes from the remainder.
       const filteredChildren = children
@@ -158,7 +158,7 @@ class Tree<NodeType> {
       // Otherwise mark the current node as exhausted and progress.
       if (filteredChildren.length > 0) {
         currentNode.status = "touched";
-        this.insertChildren(this.stack, filteredChildren);
+        this.#insertChildren(this.stack, filteredChildren);
       }
 
       // If all nodes acquired as children are added to the queue at the above stage we know
