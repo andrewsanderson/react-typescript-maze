@@ -191,6 +191,17 @@ const Settings = ({ settingsState, setSettingsState }: SettingsProps) => {
             }}
           />
         </div>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            paddingTop: "20px",
+          }}
+        >
+          <Button href="https://github.com/andrewsanderson/react-typescript-maze">
+            View on Github
+          </Button>
+        </div>
       </FormSection>
     </Container>
   );
