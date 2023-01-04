@@ -2,29 +2,29 @@ Live version: [https://andrewsanderson.github.io/react-typescript-maze](https://
 
 # Overview
 
-# Frameworks, Packages, and Dependencies
+## Frameworks, Packages, and Dependencies
 
-## Create React App
+### Create React App
 
-This project was initialised using [Create React App](https://reactjs.org/docs/create-a-new-react-app.html). Create React App is an exceptional tool for projects such as this given it's efficient deployment of an environment within the limited scope of the design.
+This project was initialised using [Create React App](https://reactjs.org/docs/create-a-new-react-app.html). Create React App is an exceptional tool for projects such as this, given it's efficient deployment of an environment within the limited scope of this design.
 
-## Jest
+### Jest
 
 I have plans to further utilise [Jest](https://jestjs.io/) alongside the rest of the react testing suite in order to round off this project however it's is used sparingly in this project as the inital intention was simply to have this a practice project. My ambition is to create a test-driven project for my next undertaking as orienting some of my problems around a test-first structure within this scenario proved invaluable.
 
-## Typescript
+### Typescript
 
 Transitioning from Javascript to (Typescript)[https://www.typescriptlang.org/] has completely altered my perspective on front-end programming. While in some cases it resulted in redundant code, the time saved during the debugging stage was worth it.
 
-## Styled Components
+### Styled Components
 
 I use [Styled Components](https://styled-components.com/) throughout this build as I find the strcuture of styled components provide a easily-legible codebase while also being a lightweight addition to my dependencies.
 
-## Material UI
+### Material UI
 
 As the components that convey the functionality of the maze and its solvers are well outside the scope of any component framework, the only use of a component framework in this context was to provide simple form components and rudimentary styling. As such I used a handful of the [MUI](https://mui.com/) library's components but could have ultimately utilised default browser components and simple CSS to achieve the same goal. MUI however does provide universally consistent components and is ultimately not too resource-heavy.
 
-## GitHub Pages
+### GitHub Pages
 
 This project was deployed using (Github Pages)[https://pages.github.com/]
 
