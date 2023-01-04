@@ -13,11 +13,6 @@ import LoopIcon from "@mui/icons-material/Loop";
 import PlayArrowIcon from "@mui/icons-material/PlayArrow";
 import Tree from "../Models/Pathing/Tree";
 import KeyComponent from "./KeyComponent";
-import manual from "../Algorithms/Generators/manual";
-
-function timeout(ms: number) {
-  return new Promise((resolve) => setTimeout(resolve, ms));
-}
 
 // Hook
 function usePrevious<T>(value: T): T {
@@ -56,8 +51,8 @@ const Wrapper = styled("div")`
   padding-left: 10%;
   padding-right: 10%;
   @media (max-width: 1150px) {
-    flex-direction: column-reverse;
-    padding-top: 300px;
+    flex-direction: column;
+    padding-top: 100px;
   }
 `;
 
