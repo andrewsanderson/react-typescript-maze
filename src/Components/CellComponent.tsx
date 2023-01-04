@@ -189,6 +189,7 @@ const CellComponent = ({
   manual,
   isInManual,
 }: CellProps) => {
+  console.log('rendered',cell.coordinates)
   return (
     <Walls cell={cell} manual={manual} isInManual={isInManual}>
       {!!from && (
