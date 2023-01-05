@@ -5,6 +5,8 @@ import Node from "../../Models/Pathing/Node";
 
 /**
  *
+ * ref: <a>https://en.wikipedia.org/wiki/A*_search_algorithm</a>
+ *
  * @param maze the maze to be solved using an informed algorithm that prioritises cells via a Manhattan distance calculator.
  * @returns a tree of nodes. The generator of which will return all nodes in the tree, in order to globally updates statuses.
  */

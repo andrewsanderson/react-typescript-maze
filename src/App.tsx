@@ -8,13 +8,10 @@ import KeyComponent from "./Components/KeyComponent";
 
 const AppContainer = styled("div")`
   background-color: #26262;
-  position: fixed;
-  top: 0;
-  left: 0;
-  bottom: 0;
-  right: 0;
+  padding-top: 100px;
   @media (max-width: 1150px) {
     overflow-y: scroll;
+    padding-top: 0px;
   }
 `;
 

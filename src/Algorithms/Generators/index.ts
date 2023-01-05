@@ -56,6 +56,8 @@ export const randomNumber = (max: number) => {
   return Math.floor(Math.random() * (max + 1));
 };
 
+// Exports
+
 const generators = {
   Manual: manual,
   "Randomised Depth First": randomisedDepthFirst,

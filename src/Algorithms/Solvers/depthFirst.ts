@@ -5,6 +5,8 @@ import Node from "../../Models/Pathing/Node";
 
 /**
  *
+ * ref: <a>https://en.wikipedia.org/wiki/Depth-first_search</a>
+ *
  * @param maze the maze to be solved using depth first pathfinding.
  * @returns a tree of nodes. The generator of which will return all nodes in the tree, in order to globally updates statuses.
  */

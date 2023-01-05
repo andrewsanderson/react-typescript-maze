@@ -7,6 +7,8 @@ import Node from "../../Models/Pathing/Node";
 
 /**
  *
+ * ref: <a>https://en.wikipedia.org/wiki/Dijkstra%27s_algorithm</a>
+ *
  * @param maze the maze to be solved using djikstras algorithm. Currently there is no weight on individual traversal, so the path uses the number of steps from the source node to prioitise queued nodes.
  * @returns a tree of nodes. The generator of which will return all nodes in the tree, in order to globally updates statuses.
  */
