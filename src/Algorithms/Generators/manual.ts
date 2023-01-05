@@ -4,6 +4,15 @@ import Graph from "../../Models/Maze/Graph";
 import Node from "../../Models/Pathing/Node";
 import Tree, { GetChildren, InsertChildren } from "../../Models/Pathing/Tree";
 
+/**
+ * 
+ * This is function is used to create paths via a straight line distance pathfinder. Currently used during 'Manual' mode. 
+ * 
+ * @param maze the maze to affect with this change.
+ * @param startCell the start cell of the path.
+ * @param endCell the end cell of this path.
+ * @returns a modified maze with the a path stretching between the provded cells. 
+ */
 const manual = (maze: Graph, startCell: Cell, endCell: Cell) => {
   const getChildren: GetChildren<Cell> = (currentNode) => {
     return getNeighborsOfCurrentNode(currentNode.value, maze);
