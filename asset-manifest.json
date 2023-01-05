@@ -1,15 +1,15 @@
 {
   "files": {
     "main.css": "/react-typescript-maze/static/css/main.e6c13ad2.css",
-    "main.js": "/react-typescript-maze/static/js/main.5932f9c4.js",
+    "main.js": "/react-typescript-maze/static/js/main.b7e11f38.js",
     "static/js/787.0d06c3cf.chunk.js": "/react-typescript-maze/static/js/787.0d06c3cf.chunk.js",
     "index.html": "/react-typescript-maze/index.html",
     "main.e6c13ad2.css.map": "/react-typescript-maze/static/css/main.e6c13ad2.css.map",
-    "main.5932f9c4.js.map": "/react-typescript-maze/static/js/main.5932f9c4.js.map",
+    "main.b7e11f38.js.map": "/react-typescript-maze/static/js/main.b7e11f38.js.map",
     "787.0d06c3cf.chunk.js.map": "/react-typescript-maze/static/js/787.0d06c3cf.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.e6c13ad2.css",
-    "static/js/main.5932f9c4.js"
+    "static/js/main.b7e11f38.js"
   ]
 }
