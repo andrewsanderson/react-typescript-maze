@@ -8,13 +8,10 @@ import Cell from "../Models/Maze/Cell";
 import CellComponent from "./CellComponent";
 import generators from "../Algorithms/Generators";
 import solvers from "../Algorithms/Solvers";
-import { Button } from "@mui/material";
-import LoopIcon from "@mui/icons-material/Loop";
-import PlayArrowIcon from "@mui/icons-material/PlayArrow";
 import Tree from "../Models/Pathing/Tree";
 import KeyComponent from "./KeyComponent";
 
-// Hook
+// Simple use prevous hook.
 function usePrevious<T>(value: T): T {
   // The ref object is a generic container whose current property is mutable ...
   // ... and can hold any value, similar to an instance property on a class
@@ -42,6 +39,7 @@ export type settings = {
   solve: boolean;
 };
 
+// simple wrapper styling
 const Wrapper = styled("div")`
   display: flex;
   align-items: center;
@@ -56,6 +54,7 @@ const Wrapper = styled("div")`
   }
 `;
 
+// Styling for the maze component container
 const MazeContainer = styled("div")`
   display: flex;
   flex-direction: column;
@@ -63,6 +62,8 @@ const MazeContainer = styled("div")`
   max-width: 50%;
   min-width: 50%;
 `;
+
+// Entire maze requires a border.
 const MazeBorder = styled("div")`
   border: 2px solid ${common.white};
 `;
@@ -118,12 +119,16 @@ const MazeComponent = () => {
       setManualPath([]);
     }
 
+    // if this is the first assignment of settings
     if (prevSettings === undefined) {
       // if just the solver changes set a new tree from the solver.
       tree = solvers[solver](mazeState);
       // reasign the treeGenerator variable with the generator of the new tree
       treeGenerator = tree.generator();
-    } else if (hasChanged("height", "width", "generator")) {
+    }
+
+    // If the listed settings change
+    else if (hasChanged("height", "width", "generator")) {
       // generate a new maze with the given generator
       const newMaze = new Graph({ height, width });
 
@@ -140,20 +145,25 @@ const MazeComponent = () => {
 
       // remove current nodes.
       setNodesState(undefined);
-    } else if (hasChanged("solver")) {
+    }
+
+    // if the solver metho changes
+    else if (hasChanged("solver")) {
       // if just the solver changes set a new tree from the solver.
       tree = solvers[solver](mazeState);
       // reasign the treeGenerator variable with the generator of the new tree
       treeGenerator = tree.generator();
       setSolutionState(undefined);
       setNodesState(undefined);
-    } else if (solve) {
+    }
+
+    // if the tree is being solves
+    else if (solve) {
       if (tree !== undefined) {
-        const thing = async () => {
+        const step = async () => {
           // If there is more than a single 'path' we'll progress them all so we can effectively illustrate tree progression.
 
           // Otherwise simply progress to the next node
-
           const nextVal = treeGenerator.next().value;
           if (nextVal === undefined) {
             setSettingsState({ ...settingsState, solve: false });
@@ -162,7 +172,7 @@ const MazeComponent = () => {
             setNodesState(nextVal);
           }
         };
-        thing();
+        step();
       }
     }
   }, [

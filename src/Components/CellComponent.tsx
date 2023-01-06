@@ -3,17 +3,6 @@ import styled, { keyframes } from "styled-components";
 import Cell from "../Models/Maze/Cell";
 import Node from "../Models/Maze/Cell";
 
-interface CellProps {
-  cell: Node;
-  status: "queued" | "touched" | "exhausted" | false | undefined;
-  solutionIndex: number | undefined;
-  from: string | boolean | undefined;
-  to: string | boolean | undefined;
-  interval: number;
-  manual: boolean;
-  isInManual: boolean;
-}
-
 // This reference is used to calculate opposing axes.
 const axes = ["top", "right", "bottom", "left"];
 
@@ -43,6 +32,7 @@ const wallStylesGenerator = (cell: Cell) => {
   return wallWidthString.join(", ");
 };
 
+// Generate styles dependant upon the origin of the path and the axis it heading towards.
 const pathingStylesGenerator = (
   origin: "edge" | "center",
   axis: string | boolean | undefined
@@ -59,6 +49,7 @@ const pathingStylesGenerator = (
   return styles.join("; ");
 };
 
+// Conditional wall visibility based on a nodes neighbors.
 const Walls = styled("div")<{
   cell: Node;
   manual: boolean;
@@ -81,8 +72,7 @@ const Walls = styled("div")<{
   background-color: ${({ isInManual }) => (isInManual ? "green" : "#00000000")};
 `;
 
-//
-
+// keyframes to animate the pathing
 const animatePathingKeyframes = (axis: string | boolean | undefined) => {
   return axis === "top" || axis === "bottom"
     ? keyframes` 
@@ -105,6 +95,7 @@ const animatePathingKeyframes = (axis: string | boolean | undefined) => {
 }`;
 };
 
+// stateus colour helper fn
 const statusColor = (status: any) => {
   switch (status) {
     case "queued":
@@ -179,6 +170,17 @@ export const Circle = styled("div")<{
     interval * solutionIndex + interval / 2 + 0.2}s;
 `;
 
+type CellComponentProps = {
+  cell: Node;
+  status: "queued" | "touched" | "exhausted" | false | undefined;
+  solutionIndex: number | undefined;
+  from: string | boolean | undefined;
+  to: string | boolean | undefined;
+  interval: number;
+  manual: boolean;
+  isInManual: boolean;
+};
+
 const CellComponent = ({
   cell,
   status,
@@ -188,8 +190,8 @@ const CellComponent = ({
   to,
   manual,
   isInManual,
-}: CellProps) => {
-  console.log('rendered',cell.coordinates)
+}: CellComponentProps) => {
+  console.log("rendered", cell.coordinates);
   return (
     <Walls cell={cell} manual={manual} isInManual={isInManual}>
       {!!from && (
@@ -219,7 +221,7 @@ const CellComponent = ({
   );
 };
 
-// As the cell is a reference value that can potentially change with each render a memoised version of this coomponent will conditionally render based on the result of the following calculation.
+// As the cell is an object reference value that will potentially change with each render a memoised version of this coomponent will conditionally render based on the result of the following calculation.
 export default memo(
   CellComponent,
   (
@@ -230,7 +232,7 @@ export default memo(
       from: oldPath,
       to: oldToLine,
       isInManual: oldIsInManual,
-    }: Readonly<CellProps>,
+    }: Readonly<CellComponentProps>,
     {
       cell: newCell,
       status: newStatus,
@@ -238,16 +240,21 @@ export default memo(
       from: newPath,
       to: newToLine,
       isInManual: newIsInManual,
-    }: Readonly<CellProps>
+    }: Readonly<CellComponentProps>
   ) => {
+    // stringify the old neighbors
     const oldNeighbors = () =>
       Object.values(oldCell.neighbors).map((node) => {
         return node?.id;
       });
+
+    // stringify the new neighbors
     const newNeighbors = () =>
       Object.values(newCell.neighbors).map((node) => {
         return node?.id;
       });
+
+    // compare all the values. If there are differences then rerender.
     return (
       JSON.stringify(oldNeighbors()) === JSON.stringify(newNeighbors()) &&
       oldStatus === newStatus &&

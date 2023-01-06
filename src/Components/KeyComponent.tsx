@@ -15,6 +15,7 @@ const Label = styled("div")`
   margin: 10px;
 `;
 
+// Key to outline the styles of the pathing nodes.
 const KeyComponent = () => {
   return (
     <Wrapper>
